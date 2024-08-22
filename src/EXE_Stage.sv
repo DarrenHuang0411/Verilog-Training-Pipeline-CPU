@@ -22,10 +22,11 @@ module EXE_Stage (
 );
 
 //<------------------- parameter ------------------->
+    reg [`DATA_WIDTH -1:0] Mux2_ALU;
+    reg [`DATA_WIDTH -1:0] Mux3_ALU;
+    reg [`DATA_WIDTH -1:0] Mux4_ALU;
 
-reg [`DATA_WIDTH -1:0] Mux2_ALU;
-reg [`DATA_WIDTH -1:0] Mux3_ALU;
-reg [`DATA_WIDTH -1:0] Mux4_ALU;
+    wire [4:0] ALU_ctrl;
 
 ////Adder1////
 assign  Add1_Mux1   =   PC_EXE_in   +    EXE_imm;
@@ -60,8 +61,8 @@ assign  PC2E_M_reg   =   ()  ?   Add1_Mux1   :   Add2_Mux1;
     assign  Mux4_rs2 =  (rs2_sel) ? Mux3_ALU : EXE_imm; //(ALU_sel)
 
 //------------------------- EXE_ALU -------------------------//
-    EXE_ALU Inst2(
-        .ALU_Ctrl(),
+    EXE_ALU EXE_ALU_inst(
+        .ALU_Ctrl(ALU_ctrl),
         .rs1(Mux2_ALU), 
         .rs2(Mux4_ALU),
         .ALU_out(ALU_out), 
@@ -71,9 +72,9 @@ assign  PC2E_M_reg   =   ()  ?   Add1_Mux1   :   Add2_Mux1;
 //------------------------- EXE_ALU_Ctrl -------------------------//
     EXE_ALU_Ctrl EXE_ALU_Ctrl_inst(
         .ALU_op(),
-        .FUNCTION_3(),
-        .FUNCTION_7(),
-        .ALU_ctrl()
+        .FUNCTION_3(EXE_function_3),
+        .FUNCTION_7(EXE_function_7),
+        .ALU_ctrl(ALU_ctrl)
     );
 
 endmodule

@@ -7,7 +7,7 @@ module EXE_ALU_Ctrl (
     input  logic [`OP_CODE -1:0] ALU_op,
     input  logic [`FUNCTION_3 -1:0] function_3,
     input  logic [`function_7 -1:0] function_7,
-    output logic ALU_ctrl
+    output logic [4:0] ALU_ctrl
 );
 
 //------------------------- parameter -------------------------//
@@ -56,7 +56,7 @@ module EXE_ALU_Ctrl (
             end
             I_type    :  begin
                 case (function_3)
-                    3'b000: ALU_ctrl    =   (function_7[5]) ? ALU_sub : ALU_add;
+                    3'b000: ALU_ctrl    =   ALU_add;
                     3'b001: ALU_ctrl    =   ALU_sll;
                     3'b010: ALU_ctrl    =   ALU_slt;
                     3'b011: ALU_ctrl    =   ALU_sltu;
@@ -66,8 +66,8 @@ module EXE_ALU_Ctrl (
                     3'b111: ALU_ctrl    =   ALU_and;
                 endcase                
             end
-            ADD_type  : ALU_ctrl    =   ALU_add;
-            I_JAL_type: ALU_ctrl    =   ALU_add;
+            ADD_type  : ALU_ctrl    =   ALU_add;  // I, S, U(AUIPC), J_type
+            I_JAL_type: ALU_ctrl    =   ALU_jalr;
             B_type    : begin // zeroflag ==> 1: PC+ imm, 0: imm
                 case (function_3)
                     3'b000: ALU_ctrl    =   ALU_beq ;
@@ -76,11 +76,13 @@ module EXE_ALU_Ctrl (
                     3'b101: ALU_ctrl    =   ALU_bge ;
                     3'b110: ALU_ctrl    =   ALU_bltu;
                     3'b111: ALU_ctrl    =   ALU_bgeu;
-                    default: ALU_ctrl    =   ALU_beq ;
+                    default: ALU_ctrl    =   ALU_beq;
                 endcase    
             end
-            U_LUI_type:  
-            default: 
+            U_LUI_type:  begin
+                
+            end
+            default: ;
         endcase
     end
 
