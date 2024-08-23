@@ -3,6 +3,7 @@
 
 module EXE_Stage (
     input   wire [`DATA_WIDTH -1:0] PC_EXE_in,
+    input   wire [`OP_CODE -1:0] ALU_op,
     //control Signal 
     input   wire [1:0] ForwardA,
     input   wire [1:0] ForwardB,
@@ -14,8 +15,8 @@ module EXE_Stage (
     input   wire [`DATA_WIDTH -1:0] EXE_imm, 
     input   wire [`DATA_WIDTH -1:0] EXE_function_3,
     input   wire [`DATA_WIDTH -1:0] EXE_function_7,
-
-
+    output  wire [`DATA_WIDTH -1:0] EXE_PC_imm,
+    //
     output  reg PC2E_M_reg,
     output  reg zeroflag,
     output  reg  [`DATA_WIDTH -1:0] ALU_o
@@ -28,9 +29,9 @@ module EXE_Stage (
 
     wire [4:0] ALU_ctrl;
 
-////Adder1////
+//------------------- PC+imm -------------------//
 assign  Add1_Mux1   =   PC_EXE_in   +    EXE_imm;
-
+assign  EXE_PC_imm  =   Add1_Mux1;
 ////Adder2////
 assign  Add2_Mux1   =   PC_EXE_in   +   32'd4;
 
@@ -71,7 +72,7 @@ assign  PC2E_M_reg   =   ()  ?   Add1_Mux1   :   Add2_Mux1;
 
 //------------------------- EXE_ALU_Ctrl -------------------------//
     EXE_ALU_Ctrl EXE_ALU_Ctrl_inst(
-        .ALU_op(),
+        .ALU_op(ALU_op),
         .FUNCTION_3(EXE_function_3),
         .FUNCTION_7(EXE_function_7),
         .ALU_ctrl(ALU_ctrl)

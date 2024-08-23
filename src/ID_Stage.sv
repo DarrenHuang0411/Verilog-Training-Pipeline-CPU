@@ -28,12 +28,12 @@ module ID_Stage (
 //ControlUnit --> Immediate_Generator
 wire [2:0] ImmGe;
 
-//Control_Unit
-ControlUnit Inst1(
-    .opcode(opcode),
-    .ALU_Ctrl_op(ALU_Ctrl_op),
-    .Imm_type(ImmGe)
-);
+//------------------- Control_Unit -------------------//
+    ControlUnit ControlUnit_inst(
+        .opcode(opcode),
+        .ALU_Ctrl_op(ALU_Ctrl_op),
+        .Imm_type(ImmGe)
+    );
 
 //Register File
 ID_RegFile  Inst2(

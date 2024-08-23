@@ -20,7 +20,7 @@ reg     [`DATA_WIDTH -1:0] PC_in;   //F_PC
 ////Mux1////
 always @(Branch_Ctrl) begin
     case (Branch_Ctrl)
-        2'd0 : PC_in = pc_mux_rs1;
+        2'd0 : PC_in = pc_mux_imm_rs1;
         2'd1 : PC_in = pc_mux_imm; 
         2'd2 : PC_in = PC_4;
         default: PC_in = 32'd0;

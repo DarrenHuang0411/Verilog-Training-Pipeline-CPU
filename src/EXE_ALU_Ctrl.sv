@@ -37,7 +37,10 @@ module EXE_ALU_Ctrl (
                         ALU_blt =   5'd13,
                         ALU_bge =   5'd14,
                         ALU_bltu=   5'd15,
-                        ALU_bgeu=   5'd16; 
+                        ALU_bgeu=   5'd16,
+                        
+                        ALU_imm =   5'd17
+                        ; 
 
 //-------------------------  -------------------------//
     always_comb begin
@@ -79,18 +82,10 @@ module EXE_ALU_Ctrl (
                     default: ALU_ctrl    =   ALU_beq;
                 endcase    
             end
-            U_LUI_type:  begin
-                
-            end
-            default: ;
+            U_LUI_type: ALU_ctrl    =   ALU_imm;
+            default:    ALU_ctrl    =   ALU_imm;
         endcase
     end
-
-
-
-
-
-
 endmodule
 
 
