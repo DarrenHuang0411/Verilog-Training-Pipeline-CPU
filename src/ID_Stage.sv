@@ -18,10 +18,10 @@ module ID_Stage (
     output  wire [`DATA_WIDTH -1:0] rs1_data,
     output  wire [`DATA_WIDTH -1:0] rs2_data,
 
+    output   wire [2:0] funct3,
     output   wire [6:0] funct7,
     output   wire [4:0] rs1_addr,
     output   wire [4:0] rs2_addr,
-    output   wire [2:0] funct3,
     output   wire [4:0] rd_addr
 );
 

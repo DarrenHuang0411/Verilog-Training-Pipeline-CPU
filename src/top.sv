@@ -36,6 +36,9 @@ module top (
     //ID-EXE Register
     reg [2:0]               ID_EXE_ALU_Ctrl_op;
     reg [1:0]               ID_EXE_branch_signal;
+
+    reg [`FUNCTION_3 -1:0]  ID_EXE_function3;
+    reg [`FUNCTION_7 -1:0]  ID_EXE_function7;
     //EXE-MEM Register
     reg [`DATA_WIDTH -1:0]  EXE_MEM_data;
 
@@ -82,8 +85,8 @@ module top (
         .WB_data,
         .EXE_rs2,
         .EXE_imm, 
-        .EXE_function_3,
-        .EXE_function_7,
+        .EXE_function_3(ID_EXE_function3),
+        .EXE_function_7(ID_EXE_function7),
         .EXE_PC_imm(EXE_IF_pc_imm),
 
         .PC2E_M_reg,
