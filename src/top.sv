@@ -41,6 +41,8 @@ module top (
     reg [`FUNCTION_7 -1:0]  ID_EXE_function7;
     //EXE-MEM Register
     reg [`DATA_WIDTH -1:0]  EXE_MEM_data;
+    //MEM-WB Register
+    reg [`DATA_WIDTH -1:0]  MEM_WB_Dout;
 
 //------------------- IF_Stage -------------------//
     IF_Stage IF_Stage_inst(
@@ -98,7 +100,8 @@ module top (
 //------------------- MEM_Stage -------------------//
     SRAM_wrapper DM1(
         .CK(clk), .CS(1'b1),
-        .DI(O_PCPC), .DO(instr)
+        .DI(O_PCPC), 
+        .DO(MEM_WB_Dout)
     );
 
 //------------------- WB_Stage -------------------//

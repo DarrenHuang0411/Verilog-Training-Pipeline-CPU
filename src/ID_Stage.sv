@@ -35,12 +35,12 @@ wire [2:0] ImmGe;
         .Imm_type(ImmGe)
     );
 
-//Register File
-ID_RegFile  Inst2(
-    .clk(clk), .rst(rst),
-    .reg_write(reg_write),//Ctrl
-    .rs1_addr(rs1_data), .rs2_data(rs2_data)
-);
+//------------------ Register File -------------------//
+    ID_RegFile  Inst2(
+        .clk(clk), .rst(rst),
+        .reg_write(reg_write),//Ctrl
+        .rs1_addr(rs1_data), .rs2_data(rs2_data)
+    );
 
 //Immediate_Generator
 

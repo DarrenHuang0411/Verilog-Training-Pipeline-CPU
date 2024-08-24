@@ -3,11 +3,11 @@
 
 module EXE_Stage (
     input   wire [`DATA_WIDTH -1:0] PC_EXE_in,
-    input   wire [`OP_CODE -1:0] ALU_op,
+    input   wire [`OP_CODE -1:0]    ALU_op,
+    input   wire                    pc_mux_sel,
     //control Signal 
     input   wire [1:0] ForwardA,
     input   wire [1:0] ForwardB,
-
     //Data
     input   wire [`DATA_WIDTH -1:0] EXE_rs1,
     input   wire [`DATA_WIDTH -1:0] WB_data,
@@ -17,7 +17,7 @@ module EXE_Stage (
     input   wire [`DATA_WIDTH -1:0] EXE_function_7,
     output  wire [`DATA_WIDTH -1:0] EXE_PC_imm,
     //
-    output  reg PC2E_M_reg,
+    output  wire [`DATA_WIDTH -1:0] pc_sel_o,
     output  reg zeroflag,
     output  reg  [`DATA_WIDTH -1:0] ALU_o
 );
@@ -36,7 +36,7 @@ assign  EXE_PC_imm  =   Add1_Mux1;
 assign  Add2_Mux1   =   PC_EXE_in   +   32'd4;
 
 ////Mux1////
-assign  PC2E_M_reg   =   ()  ?   Add1_Mux1   :   Add2_Mux1;
+assign  pc_sel_o   =   (pc_mux_sel)  ?   Add1_Mux1   :   Add2_Mux1;
 
 ////Mux2/// (RS1_data)
     always_comb begin 

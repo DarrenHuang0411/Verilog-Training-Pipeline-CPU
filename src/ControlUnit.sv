@@ -7,6 +7,10 @@ module ControlUnit (
     output  logic   [2:0] Imm_type, 
     //Control Signal 
     output  logic         ALU_rs2_sel,
+    output  logic         pc_sel,
+    
+    output  logic         DM_read,
+    output  logic         DM_write, 
     output  logic   [1:0] branch_signal
 
 );
@@ -40,6 +44,7 @@ module ControlUnit (
                 Imm_type        =   Imm_I; //don't care
 
                 ALU_rs2_sel     =   1'b1; // 1: rs2 (default), 0: Imm
+                pc_sel          =   1'b0;
                 branch_signal   =   N_Branch;
             end
             //I-type - LW/LB/LH/LHU/LBU
@@ -48,6 +53,7 @@ module ControlUnit (
                 Imm_type        =   Imm_I;
 
                 ALU_rs2_sel     =   1'b0; // 1: rs2 (default), 0: Imm 
+                pc_sel          =   1'b0;
                 branch_signal   =   N_Branch;                           
             end
             //I-type
