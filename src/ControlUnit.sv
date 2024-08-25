@@ -41,10 +41,10 @@ module ControlUnit (
             //R-type
             7'b0110011: begin
                 ALU_Ctrl_op     =   R_type;
-                Imm_type        =   Imm_I; //don't care
+                Imm_type        =   Imm_I;  //don't care
 
-                ALU_rs2_sel     =   1'b1; // 1: rs2 (default), 0: Imm
-                pc_sel          =   1'b0;
+                ALU_rs2_sel     =   1'b1;   // 1: rs2 (default), 0: Imm
+                pc_sel          =   1'b0;   // don't care
                 branch_signal   =   N_Branch;
             end
             //I-type - LW/LB/LH/LHU/LBU
@@ -52,8 +52,8 @@ module ControlUnit (
                 ALU_Ctrl_op     =   ADD_type;
                 Imm_type        =   Imm_I;
 
-                ALU_rs2_sel     =   1'b0; // 1: rs2 (default), 0: Imm 
-                pc_sel          =   1'b0;
+                ALU_rs2_sel     =   1'b0;   // 1: rs2 (default), 0: Imm 
+                pc_sel          =   1'b0;   // don't care
                 branch_signal   =   N_Branch;                           
             end
             //I-type

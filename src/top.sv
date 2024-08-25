@@ -32,7 +32,7 @@ module top (
 
 //------------------- Stage Reg -------------------//
     //IF-ID Register
-    reg ;
+    reg [`DATA_WIDTH -1:0]  IF_ID_instr;
     //ID-EXE Register
     reg [2:0]               ID_EXE_ALU_Ctrl_op;
     reg [1:0]               ID_EXE_branch_signal;
@@ -52,7 +52,7 @@ module top (
         .pc_mux_imm(EXE_IF_pc_imm),
         .PC_write(0),
         .instr_sel(0),
-        .instr_out(IF_2_reg)
+        .instr_out(IF_ID_instr)
     );
 
     SRAM_wrapper IM1(
@@ -69,7 +69,7 @@ module top (
     ID_Stage ID_Stage_inst(
         .clk(clk), .rst(rst),
 
-        // .opcode(),
+        .opcode(IF_ID_instr[6:0]),
         .ALU_Ctrl_op(ID_EXE_ALU_Ctrl_op),
         .rd_addr(WB_rd_data)
     );

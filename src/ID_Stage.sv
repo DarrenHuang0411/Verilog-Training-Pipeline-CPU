@@ -6,9 +6,8 @@ module ID_Stage (
     input   wire clk, rst,
 // //Ctrl
 //     input   wire [:] reg_write,//Reg_File
-//I/O
-////Control Unit
-    //input  
+//------------------ I/O ------------------//
+  //------------ Control Unit ------------//
     input   wire    [6:0] opcode,
     output  wire    [2:0] ALU_Ctrl_op,
 ////Reg File
@@ -39,7 +38,11 @@ wire [2:0] ImmGe;
     ID_RegFile  Inst2(
         .clk(clk), .rst(rst),
         .reg_write(reg_write),//Ctrl
-        .rs1_addr(rs1_data), .rs2_data(rs2_data)
+
+        .rs1_addr(rs1_data), 
+        .rs2_addr(rs1_data), 
+        .rs1_data(rs2_data),
+        .rs2_data(rs2_data)
     );
 
 //Immediate_Generator
