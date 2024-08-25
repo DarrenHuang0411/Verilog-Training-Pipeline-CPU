@@ -1,6 +1,4 @@
 
-
-
 module ID_RegFile (
     input   wire    clk, rst,
 //Ctrl
@@ -21,13 +19,6 @@ module ID_RegFile (
 //rs1_data rs2_data
     assign  rs1_data    =   x_reg[rs1_addr];
     assign  rs2_data    =   x_reg[rs1_addr];
-
-
-
-
-
-
-
 
 
 //Counter

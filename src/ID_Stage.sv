@@ -35,7 +35,7 @@ wire [2:0] ImmGe;
     );
 
 //------------------ Register File -------------------//
-    ID_RegFile  Inst2(
+    ID_RegFile  ID_RegFile_inst(
         .clk(clk), .rst(rst),
         .reg_write(reg_write),//Ctrl
 
