@@ -2,6 +2,7 @@
 `include "IF_Stage.sv"
 `include "ID_Stage.sv"
 `include "EXE_Stage.sv"
+`include "MEM_Stage.sv"
 `include "WB_Stage.sv"
 `include "SRAM_wrapper.sv"
 
@@ -98,6 +99,7 @@ module top (
     );
 
 //------------------- MEM_Stage -------------------//
+    
     SRAM_wrapper DM1(
         .CK(clk), .CS(1'b1),
         .DI(O_PCPC), 

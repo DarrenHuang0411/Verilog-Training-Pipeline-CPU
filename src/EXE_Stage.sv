@@ -32,7 +32,7 @@ module EXE_Stage (
 //------------------- PC+imm -------------------//
 assign  Add1_Mux1   =   PC_EXE_in   +    EXE_imm;
 assign  EXE_PC_imm  =   Add1_Mux1;
-////Adder2////
+//------------------- PC+4 -------------------//
 assign  Add2_Mux1   =   PC_EXE_in   +   32'd4;
 
 ////Mux1////
