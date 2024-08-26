@@ -1,4 +1,6 @@
 module MEM_Stage (
+    input   wire                        clk,  
+    input   wire                        rst,  
     input   wire                        MEM_rd_sel,
     input   wire  [:]                   MEM_pc,
     input   wire  [`DATA_WIDTH -1:0]    MEM_ALU,
@@ -12,5 +14,16 @@ module MEM_Stage (
 
 
     assign  MEM_rd_data = (MEM_rd_sel) ? MEM_pc : MEM_ALU;
+
+
+
+
+//------------------- SW_data_deal -------------------//
+    always @(posedge clk or posedge rst) begin
+        
+    end
+
+
+
 
 endmodule

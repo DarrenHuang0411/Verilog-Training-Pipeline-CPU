@@ -1,12 +1,11 @@
 module ForwardingUnit (
     
 
-    output  reg [:] FWDing2Mux2,
-    output  reg [:] FWDing2Mux3
-
+    output  reg [1:0] FWD_rs1,
+    output  reg [1:0] FWD_rs2
 );
     
-    
+//------------------- parameter -------------------//    
 
 
 

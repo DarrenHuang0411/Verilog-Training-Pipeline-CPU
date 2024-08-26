@@ -4,8 +4,8 @@ module ID_RegFile (
 //Ctrl
     input   wire    reg_write,
 //I/O
-    input   wire [4:0] rs1_addr,
-    input   wire [4:0] rs2_addr,
+    input   wire    [4:0] rs1_addr,
+    input   wire    [4:0] rs2_addr,
     
     input   wire    [4:0] rd_addr,
     input   wire    [`DATA_WIDTH -1 :0] rd_data,
