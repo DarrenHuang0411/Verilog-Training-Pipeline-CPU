@@ -9,6 +9,10 @@ module MEM_Stage (
     input   wire  [:]                   MEM_pc,
     input   wire  [`DATA_WIDTH -1:0]    MEM_ALU,
 
+
+
+
+    input   logic [`DATA_WIDTH -1:0]    EXE_ALU_o,
     input   wire  [`FUNCTION_3 -1:0]    EXE_funct3,
 
     output  wire  [:] MEM_rd_data,
@@ -19,6 +23,8 @@ module MEM_Stage (
 
 
     output  logic                       chip_select,
+    output  logic [4:0]                 w_eb,
+
 
     output  wire  [`DATA_WIDTH -1:0]    MEM_DM_out
 );
@@ -40,13 +46,27 @@ module MEM_Stage (
         end
     end
 
-
+//------------------------ SW -------------------------//
+    //---------------------- En -----------------------//
+    always_comb begin
+        //active low
+        w_eb    =   4'b1111;
+        if(MEM_DMread_sel && (!MEM_DMwrite_sel))
+            case (EXE_funct3)
+                3'b000:   w_eb[EXE_ALU_o[1:0]] = 1'b0;//SB 
+                3'b001:   w_eb[] = 2'b0;    //SH
+                3'b010:   w_eb  =   4'b0000; //SW
+                default:  w_eb  =   4'b0000;
+            endcase
+    end
+    //--------------------- Data ----------------------//
     always_comb begin
         if(MEM_DMread_sel && (!MEM_DMwrite_sel))
-            case ()
-                3'b000:    //SB 
-                3'b001:    //SH
-                3'b010:    //SW
+            case (EXE_funct3)
+                //active low
+                3'b000:   w_eb[EXE_ALU_o[]] = 1'b0;//SB 
+                3'b001:   w_eb[] = 2'b0;//SH
+                3'b010:   w_eb  =   4'b0000; //SW
                 default: 
             endcase
     end
