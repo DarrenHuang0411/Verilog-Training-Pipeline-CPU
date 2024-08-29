@@ -11,7 +11,6 @@ module top (
     input rst
 );
 
-
 //------------------- parameter -------------------//    
     //To_Dif_Module
     //
@@ -43,7 +42,7 @@ module top (
     //EXE-MEM Register
     reg [`DATA_WIDTH -1:0]  EXE_MEM_data;
     //MEM-WB Register
-    reg [`DATA_WIDTH -1:0]  MEM_WB_Dout;
+    reg [`DATA_WIDTH -1:0]  MEM_WB_LW_Dout;
 
 //------------------- IF_Stage -------------------//
     IF_Stage IF_Stage_inst(
