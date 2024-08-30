@@ -4,13 +4,13 @@
 module EXE_Stage (
     input   wire [`DATA_WIDTH -1:0] PC_EXE_in,
     input   wire [`OP_CODE -1:0]    ALU_op,
-    input   wire                    pc_mux_sel,
     //control Signal 
+    input   wire                    pc_mux_sel,
     input   wire [1:0] ForwardA,
     input   wire [1:0] ForwardB,
     //Data
     input   wire [`DATA_WIDTH -1:0] EXE_rs1,
-    input   wire [`DATA_WIDTH -1:0] WB_data,
+    input   wire [`DATA_WIDTH -1:0] WB_data,  //why??????
     input   wire [`DATA_WIDTH -1:0] EXE_rs2,
     input   wire [`DATA_WIDTH -1:0] EXE_imm, 
     input   wire [`DATA_WIDTH -1:0] EXE_function_3,
@@ -18,8 +18,9 @@ module EXE_Stage (
     output  wire [`DATA_WIDTH -1:0] EXE_PC_imm,
     //
     output  wire [`DATA_WIDTH -1:0] pc_sel_o,
-    output  reg zeroflag,
-    output  reg  [`DATA_WIDTH -1:0] ALU_o
+    output  reg                     zeroflag,
+    output  reg  [`DATA_WIDTH -1:0] ALU_o,
+    output  wire [`DATA_WIDTH -1:0] ALU_o_2_immrs1
 );
 
 //<------------------- parameter ------------------->
@@ -60,13 +61,13 @@ assign  pc_sel_o   =   (pc_mux_sel)  ?   Add1_Mux1   :   Add2_Mux1;
 
 ////Mux4-->imm_sel
     assign  Mux4_rs2 =  (rs2_sel) ? Mux3_ALU : EXE_imm; //(ALU_sel)
-
+    assign  ALU_o_2_immrs1 =    ALU_o;
 //------------------------- EXE_ALU -------------------------//
     EXE_ALU EXE_ALU_inst(
         .ALU_Ctrl(ALU_ctrl),
         .rs1(Mux2_ALU), 
         .rs2(Mux4_ALU),
-        .ALU_out(ALU_out), 
+        .ALU_out(ALU_o), 
         .zeroflag(zeroflag)
     );
 
