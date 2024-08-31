@@ -2,16 +2,16 @@
 `include "./EXE_ALU.sv"
 
 module EXE_Stage (
-    input   wire [`DATA_WIDTH -1:0] PC_EXE_in,
     input   wire [`OP_CODE -1:0]    ALU_op,
     //control Signal 
     input   wire                    pc_mux_sel,
-    input   wire [1:0] ForwardA,
-    input   wire [1:0] ForwardB,
+    input   wire [1:0]              ForwardA,
+    input   wire [1:0]              ForwardB,
     //Data
+    input   wire [`DATA_WIDTH -1:0] PC_EXE_in,
     input   wire [`DATA_WIDTH -1:0] EXE_rs1,
-    input   wire [`DATA_WIDTH -1:0] WB_data,  //why??????
     input   wire [`DATA_WIDTH -1:0] EXE_rs2,
+    input   wire [`DATA_WIDTH -1:0] WB_data,  //why??????
     input   wire [`DATA_WIDTH -1:0] EXE_imm, 
     input   wire [`DATA_WIDTH -1:0] EXE_function_3,
     input   wire [`DATA_WIDTH -1:0] EXE_function_7,
@@ -73,10 +73,10 @@ assign  pc_sel_o   =   (pc_mux_sel)  ?   Add1_Mux1   :   Add2_Mux1;
 
 //------------------------- EXE_ALU_Ctrl -------------------------//
     EXE_ALU_Ctrl EXE_ALU_Ctrl_inst(
-        .ALU_op(ALU_op),
-        .FUNCTION_3(EXE_function_3),
-        .FUNCTION_7(EXE_function_7),
-        .ALU_ctrl(ALU_ctrl)
+        .ALU_op     (ALU_op),
+        .FUNCTION_3 (EXE_function_3),
+        .FUNCTION_7 (EXE_function_7),
+        .ALU_ctrl   (ALU_ctrl)
     );
 
 endmodule

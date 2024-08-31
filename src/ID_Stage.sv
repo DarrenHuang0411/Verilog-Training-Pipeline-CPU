@@ -4,25 +4,34 @@
 
 module ID_Stage (
     input   wire clk, rst,
-// //Ctrl
-//     input   wire [:] reg_write,//Reg_File
 //------------------ I/O ------------------//
   //------------ Control Unit ------------//
-    input   wire    [6:0] opcode,
-    output  wire    [2:0] ALU_Ctrl_op,
-////Reg File
-    //input   wire [:] rd_addr;
-    input   wire [`DATA_WIDTH -1:0] rd_data,
+    output  wire    [`OP_CODE -1:0]     opcode,
+    input   wire    [`DATA_WIDTH -1:0]  instr,
+    
+    output  wire    [2:0]               ALU_Ctrl_op,
+    output  wire    [4:0]               regf_rs1_addr,
+    output  wire    [4:0]               regf_rs2_addr,
 
+
+    output  wire    [4:0]               rs2_addr,
+
+    output  wire    [4:0]               regf_rs1_addr,
+    output  wire [4:0]              rd_addr,
+    input   wire [`DATA_WIDTH -1:0] rd_data,
     output  wire [`DATA_WIDTH -1:0] rs1_data,
     output  wire [`DATA_WIDTH -1:0] rs2_data,
 
     output   wire [2:0] funct3,
     output   wire [6:0] funct7,
-    output   wire [4:0] rs1_addr,
-    output   wire [4:0] rs2_addr,
-    output   wire [4:0] rd_addr
 );
+
+
+
+
+
+
+
 
 //ControlUnit --> Immediate_Generator
 wire [2:0] ImmGe;

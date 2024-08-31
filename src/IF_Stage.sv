@@ -10,7 +10,7 @@ module IF_Stage (
     
     //F_HazardCtrl
     input   wire                        PC_write,
-    output  reg     [`DATA_WIDTH -1:0]  O_PC,
+    output  reg     [`DATA_WIDTH -1:0]  O_PC, 
 
     //instr_mux
     input   logic   [`DATA_WIDTH -1:0]  IM_instr,

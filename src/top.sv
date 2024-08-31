@@ -13,29 +13,31 @@ module top (
 
 //------------------- parameter -------------------//    
     //To_Dif_Module
-    //
     wire [`DATA_WIDTH -1:0] WB_rd_data;
 
     // (temp.) IF_OUT
     wire [`DATA_WIDTH -1:0] IF_2_reg;
-
-
-    //EXE--> IF//
+    //////////////////////////////////////////////////
+    wire    [1:0]               BC_IF_branch_sel;
+    wire    [`DATA_WIDTH -1:0]  EXE_IF_ALU_o;
     wire    [`DATA_WIDTH -1:0]  EXE_IF_pc_imm;
-
-    wire    [`DATA_WIDTH -1:0]  ALU_o; // where ???????
-    //
+    wire                        HAZ_IF_pc_w;
+    wire                        HAZ_IF_instr_flush;
+    ///////////////////////////////////////////////////
     wire            zeroflag;
-    wire    [1:0]   branch_sel;
 
 //------------------- Stage Reg -------------------//
   //IF-ID Register
     reg [`DATA_WIDTH -1:0]  IF_ID_instr;
 
   //------------- ID-EXE Register --------------//
-    reg [2:0]               ID_EXE_ALU_Ctrl_op;
-    reg [1:0]               ID_EXE_branch_signal;
+    //------------- Ctrl sig reg -------------//
+      reg [2:0]             ID_EXE_ALU_Ctrl_op;
+      reg [1:0]             ID_EXE_branch_signal;
+      //reg [];
+      reg                   ID_EXE_pc_mux; // final --> EXE
 
+    reg [`DATA_WIDTH -1:0]  ID_EXE_pc_in;
     reg [`DATA_WIDTH -1:0]  ID_EXE_rs1;
     reg [`DATA_WIDTH -1:0]  ID_EXE_rs2;
     reg [`FUNCTION_3 -1:0]  ID_EXE_function3;
@@ -65,62 +67,64 @@ module top (
 //------------------- IF_Stage -------------------//
     IF_Stage IF_Stage_inst(
         .clk(clk), .rst(rst),
-        .Branch_Ctrl(branch_sel),
-        .pc_mux_imm_rs1(ALU_o),
-        .pc_mux_imm(EXE_IF_pc_imm),
-        .PC_write(0),
-        .instr_sel(0),
-        .instr_out(IF_ID_instr)
+        .Branch_Ctrl      (BC_IF_branch_sel),
+        .pc_mux_imm_rs1   (EXE_IF_ALU_o),
+        .pc_mux_imm       (EXE_IF_pc_imm),
+        .PC_write         (HAZ_IF_pc_w),
+        .O_PC,
+        .IM_instr,
+        .instr_flush_sel  (HAZ_IF_instr_flush),
+        .IF_instr_out     (IF_ID_instr)
     );
 
     SRAM_wrapper IM1(
         .CK(clk), .CS(rst),
-        .OE(),
-        .WEB(),
-        .A,
-        .DI,
-        .DO
+        .OE(1'b1),
+        .WEB(1'b1),
+        .A(),
+        .DI(),
+        .DO()
     );
 
 //------------------- ID_Stage -------------------//
     ID_Stage ID_Stage_inst(
-        .opcode,
-        .ALU_Ctrl_op,
+        .clk(clk), .rst(rst),
+        .opcode         (IF_ID_instr[6:0]),
+        .ALU_Ctrl_op    (ID_EXE_ALU_Ctrl_op),
 
     //input   wire [:] rd_addr;
-        .rd_data,
-
+        .rs1_addr       (IF_ID_instr[19:15]),
+        .rs2_addr       (IF_ID_instr[24:20]),
+        .rd_addr        (),
+        .rd_data        (),
         .rs1_data       (ID_EXE_rs1),
         .rs2_data       (ID_EXE_rs2),
-        .rs1_addr,
-        .rs2_addr,
         .funct3         (ID_EXE_function3),
-        .funct7         (ID_EXE_function7),
-        .rd_addr
+        .funct7         (ID_EXE_function7)
     );
 
 //------------------- EXE_Stage -------------------//
     EXE_Stage EXE_Stage(
-        .PC_EXE_in,
-        .ALU_op(ID_EXE_ALU_Ctrl_op),
+        .ALU_op         (ID_EXE_ALU_Ctrl_op),
       //control Signal 
-        .pc_mux_sel(),
-        .ForwardA,
-        .ForwardB,
+        .pc_mux_sel     (ID_EXE_pc_mux),
+        .ForwardA       (0),
+        .ForwardB       (0),//revise
 
       //Data
-        .WB_data,
+        .PC_EXE_in      (ID_EXE_pc_in),
         .EXE_rs1        (ID_EXE_rs1),
         .EXE_rs2        (ID_EXE_rs2),
+        .WB_data,
         .EXE_imm        (ID_EXE_imm), 
         .EXE_function_3 (ID_EXE_function3),
         .EXE_function_7 (ID_EXE_function7),
         .EXE_PC_imm     (EXE_IF_pc_imm),
 
-        .PC2E_M_reg,
+        .pc_sel_o       (EXE_MEM_PC),
         .zeroflag       (zeroflag),
         .ALU_o          (EXE_MEM_ALU_o),
-        .ALU_o_2_immrs1 (ALU_o)
+        .ALU_o_2_immrs1 (EXE_IF_ALU_o)
     );
 
 //------------------- MEM_Stage -------------------//
@@ -129,26 +133,26 @@ module top (
         .clk(),  
         .rst(), 
         //----------------- Ctrl sig reg ----------------------//
-        .MEM_rd_sel(EXE_MEM_rd_sel),
-        .MEM_DMread_sel(), 
-        .MEM_DMwrite_sel(),
+        .MEM_rd_sel       (EXE_MEM_rd_sel),
+        .MEM_DMread_sel   (), 
+        .MEM_DMwrite_sel  (),
         //----------------------- MEM_I/O -----------------------//
-        .MEM_pc(EXE_MEM_PC),
-        .MEM_ALU(EXE_MEM_ALU_o),
+        .MEM_pc           (EXE_MEM_PC),
+        .MEM_ALU          (EXE_MEM_ALU_o),
         //------------------------ Data ------------------------//  
-        .EXE_funct3(),
-        .EXE_rs2_data(),     
-        .MEM_rd_data(EXE_MEM_rs2_data),
+        .EXE_funct3       (),
+        .EXE_rs2_data     (),     
+        .MEM_rd_data      (EXE_MEM_rs2_data),
 
         //------------------------- DM -------------------------//    
-        .chip_select(),
+        .chip_select      (),
         //------------------------- SW -------------------------// 
-        .w_eb(),
-        .DM_in(MEM_DM_Din),
+        .w_eb             (),
+        .DM_in            (MEM_DM_Din),
 
         //------------------------- LW -------------------------//     
-        .DM_out(DM_MEM_Dout),
-        .DM_out_2_reg(MEM_WB_rd_DM)
+        .DM_out           (DM_MEM_Dout),
+        .DM_out_2_reg     (MEM_WB_rd_DM)
     );
 
     SRAM_wrapper DM1(
@@ -173,8 +177,26 @@ module top (
     Branch_Ctrl Branch_Ctrl_inst(
         .zeroflag       (zeroflag),
         .branch_signal  (ID_EXE_branch_signal),
-        .branch_sel     (branch_sel)
+        .branch_sel     (BC_IF_branch_sel)
     );
+//---------------- Hazard Control -----------------//
+    Hazard_Ctrl Hazard_Ctrl_inst(
+        .branch_sel,
+        .EXE_read,
+
+        .ID_rs1_addr,
+        .ID_rs2_addr,
+        .EXE_rd_addr,
+
+        .pc_write         (HAZ_IF_pc_w),  
+        .instr_flush      (HAZ_IF_instr_flush),
+        .IF_ID_reg_write,
+        .ctrl_sig_flush
+
+
+    );
+
+
 //--------------- Forwarding Unit -----------------//
 
 endmodule
