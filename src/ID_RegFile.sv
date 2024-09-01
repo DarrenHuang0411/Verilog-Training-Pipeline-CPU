@@ -2,12 +2,12 @@
 module ID_RegFile (
     input   wire    clk, rst,
 //Ctrl
-    input   wire    reg_write,
+    input   wire                        reg_write,
 //I/O
-    input   wire    [4:0] rs1_addr,
-    input   wire    [4:0] rs2_addr,
+    input   wire    [4:0]               rs1_addr,
+    input   wire    [4:0]               rs2_addr,
     
-    input   wire    [4:0] rd_addr,
+    input   wire    [4:0]               rd_addr,
     input   wire    [`DATA_WIDTH -1 :0] rd_data,
     output  reg     [`DATA_WIDTH -1 :0] rs1_data,
     output  reg     [`DATA_WIDTH -1 :0] rs2_data

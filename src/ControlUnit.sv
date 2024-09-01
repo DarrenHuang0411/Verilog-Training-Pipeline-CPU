@@ -1,5 +1,3 @@
-
-
 module ControlUnit (
     input   logic   [6:0]   opcode,
 
@@ -15,8 +13,6 @@ module ControlUnit (
     output  logic           DM_write,
 
     output  logic           WB_data_sel
-
-    //output  logic            
 
 );
 

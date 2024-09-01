@@ -71,8 +71,8 @@ module top (
         .pc_mux_imm_rs1   (EXE_IF_ALU_o),
         .pc_mux_imm       (EXE_IF_pc_imm),
         .PC_write         (HAZ_IF_pc_w),
-        .O_PC,
-        .IM_instr,
+        .O_PC,            (),
+        .IM_instr         (),
         .instr_flush_sel  (HAZ_IF_instr_flush),
         .IF_instr_out     (IF_ID_instr)
     );

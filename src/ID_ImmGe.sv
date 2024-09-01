@@ -1,5 +1,5 @@
 module ID_ImmGe (
-    input   wire    [2:0] Imm_type,
+    input   wire    [2:0]               Imm_type,
     input   wire    [`DATA_WIDTH -1 :0] Instr_in,
     output  reg     [`DATA_WIDTH -1 :0] Imm_out
 );

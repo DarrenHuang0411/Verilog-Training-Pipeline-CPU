@@ -3,57 +3,78 @@
 `include "./ID_ImmGe.sv"
 
 module ID_Stage (
-    input   wire clk, rst,
-//------------------ I/O ------------------//
-  //------------ Control Unit ------------//
-    output  wire    [`OP_CODE -1:0]     opcode,
-    input   wire    [`DATA_WIDTH -1:0]  instr,
-    
-    output  wire    [2:0]               ALU_Ctrl_op,
-    output  wire    [4:0]               regf_rs1_addr,
-    output  wire    [4:0]               regf_rs2_addr,
+  input   wire clk, rst,
 
+  input   wire    [`DATA_WIDTH -1:0]  instr,
+  input   wire    [4:0]               reg_rd_adddr,
+  input   wire    [`DATA_WIDTH -1:0]  reg_rd_data,
+  input   wire                        reg_write,
 
-    output  wire    [4:0]               rs2_addr,
+  output  wire    [`DATA_WIDTH -1:0]  rs1_data,
+  output  wire    [`DATA_WIDTH -1:0]  rs2_data,
 
-    output  wire    [4:0]               regf_rs1_addr,
-    output  wire [4:0]              rd_addr,
-    input   wire [`DATA_WIDTH -1:0] rd_data,
-    output  wire [`DATA_WIDTH -1:0] rs1_data,
-    output  wire [`DATA_WIDTH -1:0] rs2_data,
+  output  wire    [`FUNCTION_3 -1:0]  funct3,
+  output  wire    [`FUNCTION_7 -1:0]  funct7,
+  output  wire    [4:0]               rs1_addr,
+  output  wire    [4:0]               rs2_addr,
+  output  wire    [4:0]               rd_addr,
+  output  wire    [`DATA_WIDTH -1:0]  imm_o
 
-    output   wire [2:0] funct3,
-    output   wire [6:0] funct7,
+  //------------ Control Signal ------------//
+    output  wire    [2:0]             ALU_Ctrl_op,  
+    output  wire    [2:0]             ALU_rs2_sel,  //final --> exe
+    output  wire                      EXE_pc_sel,   //final --> exe
+
+  //
+  input   wire    [`DATA_WIDTH -1:0]  in_pc,
+  output  wire    [`DATA_WIDTH -1:0]  out_pc
 );
 
+//-------------------- reg/connect -------------------//
+    wire [`OP_CODE -1:0] opcode;
+    wire [4:0]           regf_rs1_addr;
+    wire [4:0]           regf_rs2_addr;
+    wire [2:0]           ImmGe;
 
-
-
-
-
-
-
-//ControlUnit --> Immediate_Generator
-wire [2:0] ImmGe;
+//------------------------ data -----------------------//
+  assign  opcode          = instr[6:0];
+  assign  regf_rs1_addr   = instr[19:15];
+  assign  regf_rs2_addr   = instr[24:20];
+  assign  out_pc          = in_pc;
 
 //------------------- Control_Unit -------------------//
     ControlUnit ControlUnit_inst(
-        .opcode(opcode),
-        .ALU_Ctrl_op(ALU_Ctrl_op),
-        .Imm_type(ImmGe)
+        .opcode         (opcode),
+        .ALU_Ctrl_op    (ALU_Ctrl_op),
+        .Imm_type       (ImmGe),
+        .ALU_rs2_sel    (ALU_rs2_sel),
+        .EXE_pc_sel     (EXE_pc_sel),
+        .branch_signal  (),
+        .MEM_rd_sel     (),
+        .DM_read        (),
+        .DM_write       (),
+        .WB_data_sel    ()
     );
 
 //------------------ Register File -------------------//
     ID_RegFile  ID_RegFile_inst(
         .clk(clk), .rst(rst),
-        .reg_write(reg_write),//Ctrl
+        .reg_write      (reg_write),//Ctrl
 
-        .rs1_addr(rs1_data), 
-        .rs2_addr(rs1_data), 
-        .rs1_data(rs2_data),
-        .rs2_data(rs2_data)
+        .rs1_addr       (regf_rs1_addr), 
+        .rs2_addr       (regf_rs2_addr), 
+
+        .rd_addr        (reg_rd_adddr),
+        .rd_data        (reg_rd_data),        
+        .rs1_data       (rs1_data),
+        .rs2_data       (rs2_data)
     );
 
-//Immediate_Generator
+//---------------- Immediate_Generator ----------------//
+    ID_ImmGe  ID_ImmGe_inst(
+        .Imm_type   (ImmGe),
+        .Instr_in   (instr),
+        .Imm_out    (imm_o)
+    );
 
 endmodule
