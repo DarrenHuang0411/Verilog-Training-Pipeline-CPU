@@ -22,9 +22,12 @@ module ID_Stage (
 
   //------------ Control Signal ------------//
     output  wire    [2:0]             ALU_Ctrl_op,  
-    output  wire    [2:0]             ALU_rs2_sel,  //final --> exe
     output  wire                      EXE_pc_sel,   //final --> exe
-
+    output  wire    [2:0]             ALU_rs2_sel,  //final --> exe
+    output  wire    [1:0]             branch_signal,//final --> B ctrl 
+    output  wire                      MEM_rd_sel,   //final --> mem
+    output  wire                      MEM_DM_read,  //final --> mem
+    output  wire                      MEM_DM_write, //final --> mem
   //
   input   wire    [`DATA_WIDTH -1:0]  in_pc,
   output  wire    [`DATA_WIDTH -1:0]  out_pc
@@ -41,6 +44,9 @@ module ID_Stage (
   assign  regf_rs1_addr   = instr[19:15];
   assign  regf_rs2_addr   = instr[24:20];
   assign  out_pc          = in_pc;
+  assign  rs1_addr        = instr[19:15];
+  assign  rs2_addr        = instr[24:20];
+  assign  rd_addr         = instr[11:7];
 
 //------------------- Control_Unit -------------------//
     ControlUnit ControlUnit_inst(
@@ -49,10 +55,10 @@ module ID_Stage (
         .Imm_type       (ImmGe),
         .ALU_rs2_sel    (ALU_rs2_sel),
         .EXE_pc_sel     (EXE_pc_sel),
-        .branch_signal  (),
-        .MEM_rd_sel     (),
-        .DM_read        (),
-        .DM_write       (),
+        .branch_signal  (branch_signal),
+        .MEM_rd_sel     (MEM_rd_sel),
+        .DM_read        (MEM_DM_read),
+        .DM_write       (MEM_DM_write),
         .WB_data_sel    ()
     );
 

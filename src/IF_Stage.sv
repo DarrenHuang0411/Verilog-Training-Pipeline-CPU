@@ -10,10 +10,10 @@ module IF_Stage (
     
     //F_HazardCtrl
     input   wire                        PC_write,
-    output  reg     [`DATA_WIDTH -1:0]  O_PC, 
-
+    output  wire    [`DATA_WIDTH -1:0]  o_pc_IM,     
+    output  wire    [`DATA_WIDTH -1:0]  O_PC, 
     //instr_mux
-    input   logic   [`DATA_WIDTH -1:0]  IM_instr,
+    input   logic   [`DATA_WIDTH -1:0]  IM_IF_instr,
     input   logic                       instr_flush_sel,
     output  logic   [`DATA_WIDTH -1:0]  IF_instr_out
 );
@@ -26,7 +26,8 @@ reg     [`DATA_WIDTH -1:0] PC_in;   //F_PC
 
 
 //------------------- pc+4 adder --------------------//
-    assign PC_4 = O_PC + 32'd4;
+    assign PC_4     =   O_PC + 32'd4;
+    assign o_pc_IM  =   O_PC;  
 
 //------------------ Branch_pc_mux ------------------//
     always @(Branch_Ctrl) begin
@@ -46,6 +47,6 @@ reg     [`DATA_WIDTH -1:0] PC_in;   //F_PC
     );
 
 //---------------- instr_flush_mux ----------------//
-    assign  IF_instr_out    =   (instr_flush_sel) ? 32'd0 : IM_instr;
+    assign  IF_instr_out    =   (instr_flush_sel) ? 32'd0 : IM_IF_instr;
 
 endmodule

@@ -1,16 +1,16 @@
 module ControlUnit (
     input   logic   [6:0]   opcode,
 
-    output  logic   [2:0]   ALU_Ctrl_op,
     output  logic   [2:0]   Imm_type, 
     //Control Signal    
-    output  logic           ALU_rs2_sel,
+    output  logic   [2:0]   ALU_Ctrl_op,
     output  logic           EXE_pc_sel,
+    output  logic           ALU_rs2_sel,
     output  logic   [1:0]   branch_signal,
-
     output  logic           MEM_rd_sel,
     output  logic           DM_read,
     output  logic           DM_write,
+    output  logic           reg_file_write,
 
     output  logic           WB_data_sel
 
@@ -52,7 +52,7 @@ module ControlUnit (
                 DM_write        =   1'b0;
 
                 WB_data_sel     =   1'b0;
-
+                reg_file_write  
                 branch_signal   =   N_Branch;
 
             end
