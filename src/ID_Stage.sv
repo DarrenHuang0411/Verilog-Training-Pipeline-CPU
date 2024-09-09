@@ -18,7 +18,7 @@ module ID_Stage (
   output  wire    [4:0]               rs1_addr,
   output  wire    [4:0]               rs2_addr,
   output  wire    [4:0]               rd_addr,
-  output  wire    [`DATA_WIDTH -1:0]  imm_o
+  output  wire    [`DATA_WIDTH -1:0]  imm_o,
 
   //------------ Control Signal ------------//
     output  wire    [2:0]             ALU_Ctrl_op,  

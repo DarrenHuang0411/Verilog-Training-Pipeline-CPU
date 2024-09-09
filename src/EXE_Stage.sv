@@ -5,7 +5,8 @@ module EXE_Stage (
     //control Signal 
     input   wire [`OP_CODE -1:0]    ALU_op,
     input   wire                    pc_mux_sel,
-    
+    input   wire                    ALU_rs2_sel,
+
     input   wire                    ID_EXE_rd_sel,
     output  wire                    EXE_MEM_rd_sel,
 
@@ -80,7 +81,7 @@ assign  EXE_MEM_rd_addr =   ID_EXE_rd_addr;
     end
 
 ////Mux4-->imm_sel
-    assign  Mux4_rs2 =  (rs2_sel) ? Mux3_ALU : EXE_imm; //(ALU_sel)
+    assign  Mux4_rs2 =  (ALU_rs2_sel) ? Mux3_ALU : EXE_imm; //(ALU_sel)
     assign  ALU_o_2_immrs1 =    ALU_o;
 //------------------------- EXE_ALU -------------------------//
     EXE_ALU EXE_ALU_inst(

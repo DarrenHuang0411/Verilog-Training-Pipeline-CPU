@@ -29,9 +29,9 @@ module MEM_Stage (
     //wire [:] MEM_rd_src;
 
 //----------------------- rd_sel -----------------------//
-    assign  MEM_WB_rd_addr =  EXE_MEM_rd_addr;
-    assign  MEM_rd_data = (MEM_rd_sel) ? MEM_pc : MEM_ALU;
-    assign  chip_select = MEM_DMread_sel | MEM_DMwrite_sel;
+    assign  MEM_WB_rd_addr  =  EXE_MEM_rd_addr;
+    assign  MEM_rd_data     = (MEM_rd_sel) ? MEM_pc : MEM_ALU;
+    assign  chip_select     = MEM_DMread_sel | MEM_DMwrite_sel;
 
 
 //------------------------ SW -------------------------//
@@ -39,13 +39,14 @@ module MEM_Stage (
     always_comb begin
         //active low
         w_eb    =   4'b1111;
-        if(MEM_DMread_sel && (!MEM_DMwrite_sel))
+        if(MEM_DMread_sel && (!MEM_DMwrite_sel)) begin
             case (EXE_funct3)
                 3'b000:   w_eb[MEM_ALU[1:0]]              =   1'b0;    //SB 
                 3'b001:   w_eb[{MEM_ALU[1],1'b0} +: 2]    =   2'b0;    //SH
                 3'b010:   w_eb                              =   4'b0000; //SW
                 default:  w_eb                              =   4'b0000;
             endcase
+        end
     end
     //--------------------- Data ----------------------//
     always_comb begin

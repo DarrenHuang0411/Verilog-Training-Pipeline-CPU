@@ -142,7 +142,8 @@ module top (
       //control Signal 
         .ALU_op         (ID_EXE_ALU_Ctrl_op),
         .pc_mux_sel     (ID_EXE_pc_mux),
-
+        .ALU_rs2_sel    (ID_EXE_ALU_rs2_sel),   //final --> exe
+        
         .ID_EXE_rd_sel  (ID_EXE_rd_sel),
         .EXE_MEM_rd_sel (EXE_MEM_rd_sel),
 

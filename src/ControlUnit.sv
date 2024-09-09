@@ -52,7 +52,7 @@ module ControlUnit (
                 DM_write        =   1'b0;
 
                 WB_data_sel     =   1'b0;
-                reg_file_write  
+                //reg_file_write  
                 branch_signal   =   N_Branch;
 
             end

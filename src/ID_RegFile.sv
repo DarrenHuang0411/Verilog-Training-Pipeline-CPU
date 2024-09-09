@@ -34,9 +34,9 @@ always_ff @(posedge clk or posedge rst)
     begin
         if(!rst)
             if (reg_write && rd_addr!=5'b0)
-                Register[rd_addr]  <=  rd_data;
+                x_reg[rd_addr]  <=  rd_data;
             else
-                Register[O_counter] <=  32'b0;
+                x_reg[O_counter] <=  32'b0;
     end
 
 endmodule

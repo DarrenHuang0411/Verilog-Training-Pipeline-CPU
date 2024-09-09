@@ -6,7 +6,7 @@
 module EXE_ALU_Ctrl (
     input  logic [`OP_CODE -1:0] ALU_op,
     input  logic [`FUNCTION_3 -1:0] function_3,
-    input  logic [`function_7 -1:0] function_7,
+    input  logic [`FUNCTION_7 -1:0] function_7,
     output logic [4:0] ALU_ctrl
 );
 

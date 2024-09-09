@@ -11,7 +11,7 @@ module EXE_ALU (
     input   wire [`DATA_WIDTH -1:0] rs1,
     input   wire [`DATA_WIDTH -1:0] rs2,
     output  reg  [`DATA_WIDTH -1:0] ALU_out,
-    output  
+    //output  
     output  reg  zeroflag
 );
 //------------------------- parameter -------------------------//    

@@ -5,7 +5,7 @@ module IF_Stage (
     input   wire clk, rst,
     //F_BranchCtrl
     input   wire    [1:0]               Branch_Ctrl,
-    input   wire    [`DATA_WIDTH -1:0]  pc_mux_rs1,
+    input   wire    [`DATA_WIDTH -1:0]  pc_mux__imm_rs1,
     input   wire    [`DATA_WIDTH -1:0]  pc_mux_imm,
     
     //F_HazardCtrl
