@@ -69,8 +69,8 @@ module MEM_Stage (
         DM_out_2_reg      =   32'd0;
         //--------------- DM_in reset -----------------//
         case (EXE_funct3)
-            3'b000:   DM_out_2_reg      =   {24{DM_out[7]} , DM_out[7:0]};   //LB(signed)
-            3'b001:   DM_out_2_reg      =   {16{DM_out[7]} , DM_out[15:0]};   //LH
+            3'b000:   DM_out_2_reg      =   {{24{DM_out[7]}} , DM_out[7:0]};    //LB(signed)
+            3'b001:   DM_out_2_reg      =   {{16{DM_out[7]}} , DM_out[15:0]};   //LH
             3'b010:   DM_out_2_reg      =   DM_out;   //LW
             3'b100:   DM_out_2_reg      =   {16'd0 , DM_out[15:0]};
             3'b101:   DM_out_2_reg      =   {24'd0 , DM_out[7:0]};

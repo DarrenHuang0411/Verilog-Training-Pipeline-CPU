@@ -15,12 +15,14 @@ module Hazard_Ctrl (
 //------------------- parameter -------------------//    
 
     always_comb begin
-        if()
-
-
-
-        else if(EXE_read && ((EXE_rd_addr == ID_rs1_addr)||(EXE_rd_addr== ID_rs2_addr))) begin
+        if(branch_sel != 2'b00) begin //PC_4 ==> 2'b00
             pc_write        =   1'b1;
+            instr_flush     =   1'b1;
+            IF_ID_reg_write =   1'b1;
+            ctrl_sig_flush  =   1'b1;            
+        end
+        else if(EXE_read && ((EXE_rd_addr == ID_rs1_addr)||(EXE_rd_addr== ID_rs2_addr))) begin //lw_use
+            pc_write        =   1'b0;
             instr_flush     =   1'b0;
             IF_ID_reg_write =   1'b1; //why ?
             ctrl_sig_flush  =   1'b1;
@@ -29,7 +31,7 @@ module Hazard_Ctrl (
             pc_write        =   1'b1;
             instr_flush     =   1'b0;   
             IF_ID_reg_write =   1'b0; //why ?          
-            ctrl_sig_flush  =   1'b1;
+            ctrl_sig_flush  =   1'b0;
         end
     end
 

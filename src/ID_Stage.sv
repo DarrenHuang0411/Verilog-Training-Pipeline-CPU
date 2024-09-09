@@ -58,8 +58,8 @@ module ID_Stage (
         .branch_signal  (branch_signal),
         .MEM_rd_sel     (MEM_rd_sel),
         .DM_read        (MEM_DM_read),
-        .DM_write       (MEM_DM_write),
-        .WB_data_sel    ()
+        .DM_write       (MEM_DM_write)
+        //.WB_data_sel    ()
     );
 
 //------------------ Register File -------------------//

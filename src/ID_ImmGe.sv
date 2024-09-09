@@ -15,9 +15,9 @@ module ID_ImmGe (
     always_comb 
     begin
         case (Imm_type) 
-            Imm_S:  Imm_out     =   {20{Instr_in[31]} , Instr_in[31:25]};
+            Imm_S:  Imm_out     =   {{20{Instr_in[31]}} , Instr_in[31:25]};
             Imm_B: begin 
-                    Imm_out     =   {19{Instr_in[31]}, 
+                    Imm_out     =   {{19{Instr_in[31]}}, 
                                     Instr_in[31], 
                                     Instr_in[7], 
                                     Instr_in[30:25], 
@@ -25,15 +25,15 @@ module ID_ImmGe (
             end 
             Imm_U:  Imm_out     =   {Instr_in[31:12], 12'b0};
             Imm_J: begin
-                    Imm_out     =   {11{Instr_in[31]}, 
+                    Imm_out     =   {{11{Instr_in[31]}}, 
                                     Instr_in[31], 
                                     Instr_in[19:12], 
                                     Instr_in[20], 
                                     Instr_in[30:21], 1'b0};
             end
             //Imm_I 
-            default: Imm_out     =   {20{Instr_in[31]} , Instr_in[31:20]}; 
+            default: Imm_out     =   {{20{Instr_in[31]}} , Instr_in[31:20]}; 
         endcase        
     end
 
-endmodule :  ImmediateGenerator 
+endmodule

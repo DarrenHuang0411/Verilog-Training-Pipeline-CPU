@@ -36,17 +36,18 @@ module EXE_Stage (
     output  reg                     zeroflag,
     output  reg  [`DATA_WIDTH -1:0] ALU_o,
     output  wire [`DATA_WIDTH -1:0] ALU_o_2_immrs1,
-    output  wire [`DATA_WIDTH -1:0] Mux3_ALU,
+    output  reg [`DATA_WIDTH -1:0] Mux3_ALU,
     
     output  wire [`FUNCTION_3 -1:0] EXE_MEM_function_3,
     output  wire [4:0]              EXE_MEM_rd_addr
 );
 
 //<------------------- parameter ------------------->
-    wire [`DATA_WIDTH -1:0] Mux2_ALU;
-    wire [`DATA_WIDTH -1:0] Mux4_ALU;
-
+    reg  [`DATA_WIDTH -1:0] Mux2_ALU;
+    wire [`DATA_WIDTH -1:0] Mux4_rs2;
     wire [4:0] ALU_ctrl;
+    wire [`DATA_WIDTH -1:0] Add1_Mux1;
+    wire [`DATA_WIDTH -1:0] Add2_Mux1;
 
 //------------------- PC+imm -------------------//
 assign  Add1_Mux1   =   PC_EXE_in   +    EXE_imm;
@@ -85,9 +86,9 @@ assign  EXE_MEM_rd_addr =   ID_EXE_rd_addr;
     assign  ALU_o_2_immrs1 =    ALU_o;
 //------------------------- EXE_ALU -------------------------//
     EXE_ALU EXE_ALU_inst(
-        .ALU_Ctrl(ALU_ctrl),
+        .ALU_ctrl(ALU_ctrl),
         .rs1(Mux2_ALU), 
-        .rs2(Mux4_ALU),
+        .rs2(Mux4_rs2),
         .ALU_out(ALU_o), 
         .zeroflag(zeroflag)
     );
@@ -95,8 +96,8 @@ assign  EXE_MEM_rd_addr =   ID_EXE_rd_addr;
 //------------------------- EXE_ALU_Ctrl -------------------------//
     EXE_ALU_Ctrl EXE_ALU_Ctrl_inst(
         .ALU_op     (ALU_op),
-        .FUNCTION_3 (EXE_function_3),
-        .FUNCTION_7 (EXE_function_7),
+        .function_3 (EXE_function_3),
+        .function_7 (EXE_function_7),
         .ALU_ctrl   (ALU_ctrl)
     );
 

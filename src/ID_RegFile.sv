@@ -13,6 +13,8 @@ module ID_RegFile (
     output  reg     [`DATA_WIDTH -1 :0] rs2_data
 );
     
+//int
+    integer i;
 //Register Size
     reg [31:0] x_reg[31:0];
 
@@ -32,11 +34,13 @@ module ID_RegFile (
 //R_F 
 always_ff @(posedge clk or posedge rst)
     begin
-        if(!rst)
-            if (reg_write && rd_addr!=5'b0)
-                x_reg[rd_addr]  <=  rd_data;
-            else
-                x_reg[O_counter] <=  32'b0;
+        if(rst) begin
+            for ( i = 0; i < 32; i = i +1) begin
+                x_reg[i]  <=  32'b0;
+            end
+        end
+        else if (reg_write && rd_addr!=5'b0)
+            x_reg[rd_addr]  <=  rd_data;
     end
 
 endmodule
@@ -51,7 +55,7 @@ always_ff @ (posedge clk or posedge rst)
         if (rst)
             O_counter   <=  32'b0;
         else
-            O_counter   <=  O_counter  + 5'b1;
+            O_counter   <=  O_counter  + 5'd1;
     end
 
 endmodule

@@ -15,16 +15,23 @@ module EXE_ALU (
     output  reg  zeroflag
 );
 //------------------------- parameter -------------------------//    
-    localparam  [3:0]   ALU_add =   4'd0,
-                        ALU_sub =   4'd1,
-                        ALU_sll =   4'd2,
-                        ALU_slt =   4'd3,
-                        ALU_sltu=   4'd4,
-                        ALU_xor =   4'd5,
-                        ALU_srl =   4'd6,
-                        ALU_sra =   4'd7,
-                        ALU_or  =   4'd8,
-                        ALU_and =   4'd9;
+    localparam  [3:0]   ALU_add =   5'd0,
+                        ALU_sub =   5'd1,
+                        ALU_sll =   5'd2,
+                        ALU_slt =   5'd3,
+                        ALU_sltu=   5'd4,
+                        ALU_xor =   5'd5,
+                        ALU_srl =   5'd6,
+                        ALU_sra =   5'd7,
+                        ALU_or  =   5'd8,
+                        ALU_and =   5'd9,
+    //----------------------- beq -----------------------------// 
+                        ALU_beq =   5'd11,
+                        ALU_bne =   5'd12,
+                        ALU_blt =   5'd13,
+                        ALU_bge =   5'd14,
+                        ALU_bltu=   5'd15,       
+                        ALU_bgeu=   5'd16;
     
     wire [`DATA_WIDTH -1:0] s_rs1;
     wire [`DATA_WIDTH -1:0] s_rs2;
@@ -43,7 +50,7 @@ module EXE_ALU (
             ALU_srl:    ALU_out =   rs1 >>  rs2[4:0];
             ALU_sra:    ALU_out =   s_rs1 >>  rs2[4:0];
             ALU_or :    ALU_out =   rs1 |   rs2;
-            ALU_and:    ALU_out =   rs1 &   rs2;      
+            ALU_and:    ALU_out =   rs1 &   rs2;  
             default:    ALU_out =   32'b0;
         endcase  
     end
