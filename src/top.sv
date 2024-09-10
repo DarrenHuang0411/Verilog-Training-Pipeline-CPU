@@ -71,6 +71,8 @@ module top (
       reg                   ID_EXE_rd_sel;          // final --> MEM
       reg                   ID_EXE_DM_read;         // final --> MEM
       reg                   ID_EXE_DM_write;        // final --> MEM
+      reg                   ID_EXE_WB_data_sel   ;
+      reg                   ID_EXE_reg_file_write;
 
       wire [2:0]            wire_ID_EXE_ALU_Ctrl_op  ;
       wire                  wire_ID_EXE_pc_mux       ;
@@ -79,6 +81,8 @@ module top (
       wire                  wire_ID_EXE_rd_sel       ;
       wire                  wire_ID_EXE_DM_read      ;
       wire                  wire_ID_EXE_DM_write     ;
+      wire                  wire_ID_EXE_WB_data_sel   ;
+      wire                  wire_ID_EXE_reg_file_write;
 
   //------------- EXE-MEM Register --------------//
     reg [`DATA_WIDTH -1:0]  EXE_MEM_PC;
@@ -102,22 +106,32 @@ module top (
       reg                   EXE_MEM_DM_read;        // final --> MEM
       reg                   EXE_MEM_DM_write;       // final --> MEM
       reg                   EXE_MEM_data_sel;       // final --> WB
+      reg                   EXE_MEM_reg_file_write; // final --> WB --> RF
 
       wire                  wire_EXE_MEM_DMread_sel; 
       wire                  wire_EXE_MEM_DMwrite_sel;
       wire                  wire_EXE_MEM_rd_sel;     
       wire                  wire_EXE_MEM_DM_read;    
       wire                  wire_EXE_MEM_DM_write;   
-      wire                  wire_EXE_MEM_data_sel;   
+      wire                  wire_EXE_MEM_data_sel;
+      wire                  wire_EXE_MEM_reg_file_write;
 
   //------------- MEM-WB Register  --------------//
     reg  [`DATA_WIDTH -1:0]  MEM_WB_rd_dir;
-    wire [`DATA_WIDTH -1:0]  DM_MEM_Dout;
     reg  [`DATA_WIDTH -1:0]  MEM_WB_rd_DM;
     reg  [4:0]               MEM_WB_rd_addr;   
+    wire [`DATA_WIDTH -1:0]  DM_MEM_Dout;
+
+    wire [`DATA_WIDTH -1:0]  wire_MEM_WB_rd_dir;
+    wire [`DATA_WIDTH -1:0]  wire_MEM_WB_rd_DM;
+    wire [4:0]               wire_MEM_WB_rd_addr;   
+
     //------------- Ctrl sig reg -------------//
       reg                    MEM_WB_data_sel; //final --> WB
+      wire                   wire_MEM_WB_data_sel;
 
+      reg                    MEM_WB_reg_file_write;
+      wire                   wire_MEM_WB_reg_file_write;
   //------------- WB wire/reg -------------------//
     wire [`DATA_WIDTH -1:0]  WB_rd_data;
 
@@ -152,7 +166,7 @@ module top (
         .instr          (IF_ID_instr),
         .reg_rd_adddr   (MEM_WB_rd_addr),
         .reg_rd_data    (WB_rd_data),
-        .reg_write      (),
+        .reg_write      (MEM_WB_reg_file_write),
 
         .rs1_data       (wire_ID_EXE_rs1),
         .rs2_data       (wire_ID_EXE_rs2),
@@ -172,6 +186,9 @@ module top (
         .MEM_rd_sel     (wire_ID_EXE_rd_sel),        //final --> mem
         .MEM_DM_read    (wire_ID_EXE_DM_read),       //final --> mem
         .MEM_DM_write   (wire_ID_EXE_DM_write),      //final --> mem
+        
+        .WB_data_sel    (wire_ID_EXE_WB_data_sel),
+        .reg_file_write (wire_ID_EXE_reg_file_write),
 
         .in_pc          (IF_ID_pc),
         .out_pc         (wire_ID_EXE_pc_in)
@@ -193,6 +210,12 @@ module top (
         .ID_EXE_DM_write (ID_EXE_DM_write), 
         .EXE_MEM_DM_write(wire_EXE_MEM_DM_write),
 
+        .ID_EXE_WB_data_sel (ID_EXE_WB_data_sel),
+        .EXE_MEM_WB_data_sel(wire_EXE_MEM_data_sel),
+        
+        .ID_EXE_reg_file_write (ID_EXE_reg_file_write),
+        .EXE_MEM_reg_file_write(wire_EXE_MEM_reg_file_write),
+
         .ForwardA_sel   (FWD_EXE_rs1_sel),
         .ForwardB_sel   (FWD_EXE_rs2_sel),//revise
 
@@ -201,7 +224,7 @@ module top (
         .EXE_rs1        (ID_EXE_rs1),
         .EXE_rs2        (ID_EXE_rs2),
         .WB_rd_data     (WB_rd_data),
-        .MEM_rd_data    (MEM_WB_rd_dir), //Focus
+        .MEM_rd_data    (wire_MEM_WB_rd_dir), //Focus
 
         .EXE_imm        (ID_EXE_imm), 
         .EXE_function_3 (ID_EXE_function3),
@@ -228,15 +251,19 @@ module top (
         .MEM_rd_sel       (EXE_MEM_rd_sel),
         .MEM_DMread_sel   (EXE_MEM_DM_read), 
         .MEM_DMwrite_sel  (EXE_MEM_DM_write),
+        .EXE_MEM_WB_data_sel (EXE_MEM_data_sel),
+        .EXE_MEM_reg_file_write (EXE_MEM_reg_file_write),
+        .MEM_WB_data_sel  (wire_MEM_WB_data_sel),
+        .MEM_WB_reg_file_write (wire_MEM_WB_reg_file_write),
         //----------------------- MEM_I/O -----------------------//
         .MEM_pc           (EXE_MEM_PC),
         .MEM_ALU          (EXE_MEM_ALU_o),
-        .EXE_MEM_rd_addr  (MEM_WB_rd_addr),
-        .MEM_WB_rd_addr   (MEM_WB_rd_addr),
+        .EXE_MEM_rd_addr  (EXE_MEM_rd_addr),
+        .MEM_WB_rd_addr   (wire_MEM_WB_rd_addr),
         //------------------------ Data ------------------------//  
         .EXE_funct3       (EXE_MEM_function_3),
         .EXE_rs2_data     (EXE_MEM_rs2_data),     
-        .MEM_rd_data      (MEM_WB_rd_dir),
+        .MEM_rd_data      (wire_MEM_WB_rd_dir),
 
         //------------------------- DM -------------------------//    
         .chip_select      (MEM_DM_CS),
@@ -246,7 +273,7 @@ module top (
 
         //------------------------- LW -------------------------//     
         .DM_out           (DM_MEM_Dout),
-        .DM_out_2_reg     (MEM_WB_rd_DM)
+        .DM_out_2_reg     (wire_MEM_WB_rd_DM)
     );
 
     SRAM_wrapper DM1(
@@ -278,7 +305,7 @@ module top (
 //---------------- Hazard Control -----------------//
     Hazard_Ctrl Hazard_Ctrl_inst(
         .branch_sel         (BC_IF_branch_sel),
-        .EXE_read           (),
+        .EXE_read           (ID_EXE_DM_read),
 
         .ID_rs1_addr        (ID_EXE_rs1_addr),
         .ID_rs2_addr        (ID_EXE_rs2_addr),
@@ -297,27 +324,29 @@ module top (
        .EXE_rd_addr          (EXE_MEM_rd_addr),
        .MEM_rd_addr          (MEM_WB_rd_addr),
 
-       //.EXE_MEM_fwd_write    (),
-       //.MEM_WB_fwd_write     (),
+       .EXE_MEM_fwd_write    (EXE_MEM_reg_file_write),
+       .MEM_WB_fwd_write     (MEM_WB_reg_file_write),
 
        .FWD_rs1_sel          (FWD_EXE_rs1_sel),
-       .FWD_rs2_sel          (FWD_EXE_rs1_sel)
+       .FWD_rs2_sel          (FWD_EXE_rs2_sel)
     );
 
 //--------------- register_reset -----------------//
     always_ff @(posedge clk) begin
-        if (rst || wire_HAZ_IF_ID_reg_write) begin
+        if (rst) begin
             IF_ID_pc                <=  0;
             IF_ID_instr             <=  0;
         end 
         else begin
-            IF_ID_pc                <= wire_IF_ID_pc;
-            IF_ID_instr             <= wire_IF_ID_instr;    
+            if(wire_HAZ_IF_ID_reg_write) begin
+                IF_ID_pc                <= wire_IF_ID_pc;
+                IF_ID_instr             <= (HAZ_IF_instr_flush) ? 32'b0 : wire_IF_ID_instr;    
+            end
         end
     end
 
     always_ff @(posedge clk) begin
-        if (rst || wire_ctrl_sig_flush) begin
+        if (rst) begin
             ID_EXE_pc_in            <=  0;
             ID_EXE_rs1              <=  0;   
             ID_EXE_rs2              <=  0;
@@ -334,6 +363,8 @@ module top (
             ID_EXE_rd_sel           <=  0;
             ID_EXE_DM_read          <=  0;
             ID_EXE_DM_write         <=  0;
+            ID_EXE_WB_data_sel      <=  0;
+            ID_EXE_reg_file_write   <=  0;
         end 
         else begin
             ID_EXE_pc_in            <= wire_ID_EXE_pc_in;
@@ -348,10 +379,12 @@ module top (
             ID_EXE_ALU_Ctrl_op      <= wire_ID_EXE_ALU_Ctrl_op  ;
             ID_EXE_pc_mux           <= wire_ID_EXE_pc_mux       ;
             ID_EXE_ALU_rs2_sel      <= wire_ID_EXE_ALU_rs2_sel  ;
-            ID_EXE_branch_signal    <= wire_ID_EXE_branch_signal;
+            ID_EXE_branch_signal    <= (wire_ctrl_sig_flush) ? 1'b0 : wire_ID_EXE_branch_signal;
             ID_EXE_rd_sel           <= wire_ID_EXE_rd_sel       ;
-            ID_EXE_DM_read          <= wire_ID_EXE_DM_read      ;
-            ID_EXE_DM_write         <= wire_ID_EXE_DM_write     ;        
+            ID_EXE_DM_read          <= (wire_ctrl_sig_flush) ? 1'b0 : wire_ID_EXE_DM_read;
+            ID_EXE_DM_write         <= (wire_ctrl_sig_flush) ? 1'b0 : wire_ID_EXE_DM_write;   
+            ID_EXE_WB_data_sel      <= wire_ID_EXE_WB_data_sel  ;
+            ID_EXE_reg_file_write   <= (wire_ctrl_sig_flush) ? 1'b0 : wire_ID_EXE_reg_file_write;     
         end
     end
 
@@ -368,7 +401,8 @@ module top (
             EXE_MEM_rd_sel            <=    0;           
             EXE_MEM_DM_read           <=    0;                  
             EXE_MEM_DM_write          <=    0;                  
-            EXE_MEM_data_sel          <=    0;                 
+            EXE_MEM_data_sel          <=    0;  
+            EXE_MEM_reg_file_write    <=    0;               
         end 
         else begin
             EXE_MEM_PC                <=    wire_EXE_MEM_PC         ;                 
@@ -382,7 +416,27 @@ module top (
             EXE_MEM_rd_sel            <=    wire_EXE_MEM_rd_sel;                
             EXE_MEM_DM_read           <=    wire_EXE_MEM_DM_read;                      
             EXE_MEM_DM_write          <=    wire_EXE_MEM_DM_write;                     
-            EXE_MEM_data_sel          <=    wire_EXE_MEM_data_sel;             
+            EXE_MEM_data_sel          <=    wire_EXE_MEM_data_sel;  
+            EXE_MEM_reg_file_write    <=    wire_EXE_MEM_reg_file_write;           
         end
+    end
+
+    always_ff @(posedge clk) begin
+        if (rst) begin
+            MEM_WB_rd_dir      <=   0;     
+            MEM_WB_rd_DM       <=   0; 
+            MEM_WB_rd_addr     <=   0; 
+            
+            MEM_WB_data_sel    <=   0;   
+            MEM_WB_reg_file_write   <=  0;
+        end 
+        else begin
+            MEM_WB_rd_dir           <=   wire_MEM_WB_rd_dir;      
+            MEM_WB_rd_DM            <=   wire_MEM_WB_rd_DM;       
+            MEM_WB_rd_addr          <=   wire_MEM_WB_rd_addr;
+            
+            MEM_WB_data_sel         <=   wire_MEM_WB_data_sel; 
+            MEM_WB_reg_file_write   <=   wire_MEM_WB_reg_file_write;               
+        end        
     end
 endmodule

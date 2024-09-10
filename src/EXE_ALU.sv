@@ -15,7 +15,7 @@ module EXE_ALU (
     output  reg  zeroflag
 );
 //------------------------- parameter -------------------------//    
-    localparam  [3:0]   ALU_add =   5'd0,
+    localparam  [4:0]   ALU_add =   5'd0,
                         ALU_sub =   5'd1,
                         ALU_sll =   5'd2,
                         ALU_slt =   5'd3,
@@ -25,6 +25,7 @@ module EXE_ALU (
                         ALU_sra =   5'd7,
                         ALU_or  =   5'd8,
                         ALU_and =   5'd9,
+                        ALU_JALR =   5'd10,
     //----------------------- beq -----------------------------// 
                         ALU_beq =   5'd11,
                         ALU_bne =   5'd12,
@@ -32,10 +33,14 @@ module EXE_ALU (
                         ALU_bge =   5'd14,
                         ALU_bltu=   5'd15,       
                         ALU_bgeu=   5'd16;
-    
+
+                        //ALU_imm
+
     wire [`DATA_WIDTH -1:0] s_rs1;
     wire [`DATA_WIDTH -1:0] s_rs2;
-    
+    wire [`DATA_WIDTH -1:0] R_add;
+
+    assign R_add    =   rs1 +   rs2;
     assign s_rs1    =   rs1; //deal with the previous stage
     assign s_rs2    =   rs2; 
 //------------------------- Basic -------------------------//
@@ -50,7 +55,8 @@ module EXE_ALU (
             ALU_srl:    ALU_out =   rs1 >>  rs2[4:0];
             ALU_sra:    ALU_out =   s_rs1 >>  rs2[4:0];
             ALU_or :    ALU_out =   rs1 |   rs2;
-            ALU_and:    ALU_out =   rs1 &   rs2;  
+            ALU_and:    ALU_out =   rs1 &   rs2; 
+            ALU_JALR:   ALU_out =   {R_add[31:1], 1'b0}; //why
             default:    ALU_out =   32'b0;
         endcase  
     end

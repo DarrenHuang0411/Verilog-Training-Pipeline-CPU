@@ -16,6 +16,12 @@ module EXE_Stage (
     input   wire                    ID_EXE_DM_write,  
     output  wire                    EXE_MEM_DM_write,
 
+    input   wire                    ID_EXE_WB_data_sel,
+    output  wire                    EXE_MEM_WB_data_sel,
+
+    input   wire                    ID_EXE_reg_file_write,
+    output  wire                    EXE_MEM_reg_file_write,
+
     input   wire [1:0]              ForwardA_sel,
     input   wire [1:0]              ForwardB_sel,
     //Data
@@ -59,7 +65,13 @@ assign  pc_sel_o        =   (pc_mux_sel)  ?   Add1_Mux1   :   Add2_Mux1;
 
 assign  EXE_PC_imm      =   Add1_Mux1;
 assign  EXE_MEM_rd_sel  =   ID_EXE_rd_sel;
+assign  EXE_MEM_DM_read =   ID_EXE_DM_read;
+assign  EXE_MEM_DM_write=   ID_EXE_DM_write;
+
+assign  EXE_MEM_function_3  =   EXE_function_3;
 assign  EXE_MEM_rd_addr =   ID_EXE_rd_addr;
+assign  EXE_MEM_WB_data_sel =   ID_EXE_WB_data_sel;
+assign  EXE_MEM_reg_file_write  =   ID_EXE_reg_file_write;
 
 ////Mux2/// (RS1_data)
     always_comb begin 

@@ -5,6 +5,10 @@ module MEM_Stage (
     input   logic                       MEM_rd_sel,
     input   logic                       MEM_DMread_sel, 
     input   logic                       MEM_DMwrite_sel,
+    input   logic                       EXE_MEM_WB_data_sel,
+    input   logic                       EXE_MEM_reg_file_write,
+    output  logic                       MEM_WB_data_sel,
+    output  logic                       MEM_WB_reg_file_write,
     //----------------------- MEM_I/O -----------------------//
     input   wire  [`DATA_WIDTH -1:0]    MEM_pc,
     input   wire  [`DATA_WIDTH -1:0]    MEM_ALU,
@@ -32,7 +36,8 @@ module MEM_Stage (
     assign  MEM_WB_rd_addr  =  EXE_MEM_rd_addr;
     assign  MEM_rd_data     = (MEM_rd_sel) ? MEM_pc : MEM_ALU;
     assign  chip_select     = MEM_DMread_sel | MEM_DMwrite_sel;
-
+    assign  MEM_WB_data_sel = EXE_MEM_WB_data_sel;
+    assign  MEM_WB_reg_file_write = EXE_MEM_reg_file_write;
 
 //------------------------ SW -------------------------//
     //---------------------- En -----------------------//

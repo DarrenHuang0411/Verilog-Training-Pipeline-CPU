@@ -51,8 +51,8 @@ module ControlUnit (
                 DM_read         =   1'b0;
                 DM_write        =   1'b0;
 
-                WB_data_sel     =   1'b0;
-                //reg_file_write  
+                WB_data_sel     =   1'b0;                
+                reg_file_write  =   1'b1;
                 branch_signal   =   N_Branch;
 
             end
@@ -69,7 +69,7 @@ module ControlUnit (
                 DM_write        =   1'b0;
 
                 WB_data_sel     =   1'b1;
-
+                reg_file_write  =   1'b1;
                 branch_signal   =   N_Branch;                           
             end
             //I-type
@@ -85,7 +85,7 @@ module ControlUnit (
                 DM_write        =   1'b0;
 
                 WB_data_sel     =   1'b0;
-
+                reg_file_write  =   1'b1;
                 branch_signal   =   N_Branch;
             end
             //I-type - JALR
@@ -101,7 +101,7 @@ module ControlUnit (
                 DM_write        =   1'b0;
 
                 WB_data_sel     =   1'b0;
-
+                reg_file_write  =   1'b1;
                 branch_signal   =   JAL_Branch;
             end
             //S-type
@@ -117,7 +117,7 @@ module ControlUnit (
                 DM_write        =   1'b1;
 
                 WB_data_sel     =   1'b0;
-
+                reg_file_write  =   1'b0;
                 branch_signal   =   JAL_Branch;                             
             end
             //B-type
@@ -133,7 +133,7 @@ module ControlUnit (
                 DM_write        =   1'b0;
 
                 WB_data_sel     =   1'b0;
-
+                reg_file_write  =   1'b0;
                 branch_signal   =   B_Branch;                
             end
             //U-type - AUIPC
@@ -149,7 +149,7 @@ module ControlUnit (
                 DM_write        =   1'b0;
 
                 WB_data_sel     =   1'b0;
-
+                reg_file_write  =   1'b1;
                 branch_signal   =   N_Branch;                    
             end
             //U-type - LUI
@@ -165,7 +165,7 @@ module ControlUnit (
                 DM_write        =   1'b0;
 
                 WB_data_sel     =   1'b0;
-
+                reg_file_write  =   1'b1;
                 branch_signal   =   N_Branch;                        
             end
             //J-type
@@ -181,7 +181,7 @@ module ControlUnit (
                 DM_write        =   1'b0;
 
                 WB_data_sel     =   1'b0;
-
+                reg_file_write  =   1'b1;
                 branch_signal   =   J_Branch;                
             end
             default: begin //don't care
@@ -196,7 +196,7 @@ module ControlUnit (
                 DM_write        =   1'b0;
 
                 WB_data_sel     =   1'b0;
-
+                reg_file_write  =   1'b0;
                 branch_signal   =   N_Branch;                                       
             end
         endcase

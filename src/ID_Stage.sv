@@ -28,6 +28,8 @@ module ID_Stage (
     output  wire                      MEM_rd_sel,   //final --> mem
     output  wire                      MEM_DM_read,  //final --> mem
     output  wire                      MEM_DM_write, //final --> mem
+    output  wire                      WB_data_sel,
+    output  wire                      reg_file_write,
   //
   input   wire    [`DATA_WIDTH -1:0]  in_pc,
   output  wire    [`DATA_WIDTH -1:0]  out_pc
@@ -44,8 +46,10 @@ module ID_Stage (
   assign  regf_rs1_addr   = instr[19:15];
   assign  regf_rs2_addr   = instr[24:20];
   assign  out_pc          = in_pc;
-  assign  rs1_addr        = instr[19:15];
+  assign  funct7          = instr[31:25];
   assign  rs2_addr        = instr[24:20];
+  assign  rs1_addr        = instr[19:15];
+  assign  funct3          = instr[14:12];
   assign  rd_addr         = instr[11:7];
 
 //------------------- Control_Unit -------------------//
@@ -58,8 +62,9 @@ module ID_Stage (
         .branch_signal  (branch_signal),
         .MEM_rd_sel     (MEM_rd_sel),
         .DM_read        (MEM_DM_read),
-        .DM_write       (MEM_DM_write)
-        //.WB_data_sel    ()
+        .DM_write       (MEM_DM_write),
+        .reg_file_write (reg_file_write),
+        .WB_data_sel    (WB_data_sel)
     );
 
 //------------------ Register File -------------------//
