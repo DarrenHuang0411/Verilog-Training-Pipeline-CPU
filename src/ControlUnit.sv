@@ -118,7 +118,7 @@ module ControlUnit (
 
                 WB_data_sel     =   1'b0;
                 reg_file_write  =   1'b0;
-                branch_signal   =   JAL_Branch;                             
+                branch_signal   =   N_Branch;                             
             end
             //B-type
             7'b1100011: begin
@@ -171,7 +171,7 @@ module ControlUnit (
             //J-type
             7'b1101111: begin
                 ALU_Ctrl_op     =   ADD_type;
-                Imm_type        =   Imm_I;
+                Imm_type        =   Imm_J;
 
                 ALU_rs2_sel     =   1'b0;   // 1: rs2 , 0: Imm (default)                  
                 EXE_pc_sel      =   1'b0;   // 1: pc+imm       , 0: pc+4 or don't care 

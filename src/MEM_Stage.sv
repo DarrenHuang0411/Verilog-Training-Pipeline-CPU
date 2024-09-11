@@ -22,7 +22,7 @@ module MEM_Stage (
     //------------------------- DM -------------------------//    
     output  logic                       chip_select,
     //------------------------- SW -------------------------// 
-    output  logic [4:0]                 w_eb,
+    output  logic [3:0]                 w_eb,
     output  logic [`DATA_WIDTH -1:0]    DM_in,
 
     //------------------------- LW -------------------------//     
@@ -44,7 +44,7 @@ module MEM_Stage (
     always_comb begin
         //active low
         w_eb    =   4'b1111;
-        if(MEM_DMread_sel && (!MEM_DMwrite_sel)) begin
+        if(MEM_DMwrite_sel) begin
             case (EXE_funct3)
                 3'b000:   w_eb[MEM_ALU[1:0]]              =   1'b0;    //SB 
                 3'b001:   w_eb[{MEM_ALU[1],1'b0} +: 2]    =   2'b0;    //SH

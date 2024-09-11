@@ -34,6 +34,7 @@ module top (
     wire                        EXE_Bctrl_zeroflag;
     wire                        MEM_DM_CS;
 
+    wire    [3:0]               DM_write_enable;
 //------------------- Stage Reg -------------------//
   //--------------- IF-ID Register --------------//
     reg [`DATA_WIDTH -1:0]  IF_ID_pc;
@@ -277,11 +278,11 @@ module top (
     );
 
     SRAM_wrapper DM1(
-        .CK (clk), 
+        .CK (~clk), 
         .CS (MEM_DM_CS),
-        .OE (DM_read_enable),
+        .OE (EXE_MEM_DM_read),
         .WEB(DM_write_enable),
-        .A  (EXE_MEM_ALU_o),
+        .A  (EXE_MEM_ALU_o[15:2]),
         .DI (MEM_DM_Din), 
         .DO (DM_MEM_Dout)
     );

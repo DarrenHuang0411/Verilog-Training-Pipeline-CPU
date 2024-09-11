@@ -69,7 +69,7 @@ module ID_Stage (
 
 //------------------ Register File -------------------//
     ID_RegFile  ID_RegFile_inst(
-        .clk(clk), .rst(rst),
+        .clk(~clk), .rst(rst),
         .reg_write      (reg_write),//Ctrl
 
         .rs1_addr       (regf_rs1_addr), 

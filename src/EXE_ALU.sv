@@ -32,12 +32,12 @@ module EXE_ALU (
                         ALU_blt =   5'd13,
                         ALU_bge =   5'd14,
                         ALU_bltu=   5'd15,       
-                        ALU_bgeu=   5'd16;
+                        ALU_bgeu=   5'd16,
 
-                        //ALU_imm
+                        ALU_imm=    5'd17;
 
-    wire [`DATA_WIDTH -1:0] s_rs1;
-    wire [`DATA_WIDTH -1:0] s_rs2;
+    wire signed [`DATA_WIDTH -1:0] s_rs1;
+    wire signed [`DATA_WIDTH -1:0] s_rs2;
     wire [`DATA_WIDTH -1:0] R_add;
 
     assign R_add    =   rs1 +   rs2;
@@ -57,6 +57,7 @@ module EXE_ALU (
             ALU_or :    ALU_out =   rs1 |   rs2;
             ALU_and:    ALU_out =   rs1 &   rs2; 
             ALU_JALR:   ALU_out =   {R_add[31:1], 1'b0}; //why
+            ALU_imm:    ALU_out =   rs2;
             default:    ALU_out =   32'b0;
         endcase  
     end
