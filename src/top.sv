@@ -308,9 +308,9 @@ module top (
         .branch_sel         (BC_IF_branch_sel),
         .EXE_read           (ID_EXE_DM_read),
 
-        .ID_rs1_addr        (ID_EXE_rs1_addr),
-        .ID_rs2_addr        (ID_EXE_rs2_addr),
-        .EXE_rd_addr        (EXE_MEM_rd_addr),
+        .ID_rs1_addr        (wire_ID_EXE_rs1_addr),
+        .ID_rs2_addr        (wire_ID_EXE_rs2_addr),
+        .EXE_rd_addr        (wire_EXE_MEM_rd_addr),
 
         .pc_write           (HAZ_IF_pc_w),  
         .instr_flush        (HAZ_IF_instr_flush),

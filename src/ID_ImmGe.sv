@@ -15,7 +15,7 @@ module ID_ImmGe (
     always_comb 
     begin
         case (Imm_type) 
-            Imm_S:  Imm_out     =   {{20{Instr_in[31]}} , Instr_in[31:25]};
+            Imm_S:  Imm_out     =   {{20{Instr_in[31]}} , Instr_in[31:25],Instr_in[11:7]};
             Imm_B: begin 
                     Imm_out     =   {{19{Instr_in[31]}}, 
                                     Instr_in[31], 
