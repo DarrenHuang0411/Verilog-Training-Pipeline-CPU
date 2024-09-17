@@ -58,7 +58,7 @@ module MEM_Stage (
         //--------------- DM_in reset -----------------//
         DM_in   =   32'd0;
         case (EXE_funct3)
-            3'b000:   DM_in[MEM_ALU[1:0] +: 8]            =   EXE_rs2_data[7:0];    //SB (0~3)
+            3'b000:   DM_in[{MEM_ALU[1:0],3'b0} +: 8]            =   EXE_rs2_data[7:0];    //SB (0~3)
             3'b001:   DM_in[{MEM_ALU[1],4'b0} +: 16]      =   EXE_rs2_data[15:0];   //SH
             3'b010:   DM_in                                 =   EXE_rs2_data;         //SW
             default:  DM_in                                 =   32'd0;
@@ -77,8 +77,8 @@ module MEM_Stage (
             3'b000:   DM_out_2_reg      =   {{24{DM_out[7]}} , DM_out[7:0]};    //LB(signed)
             3'b001:   DM_out_2_reg      =   {{16{DM_out[7]}} , DM_out[15:0]};   //LH
             3'b010:   DM_out_2_reg      =   DM_out;   //LW
-            3'b100:   DM_out_2_reg      =   {16'd0 , DM_out[15:0]};
-            3'b101:   DM_out_2_reg      =   {24'd0 , DM_out[7:0]};
+            3'b100:   DM_out_2_reg      =   {24'd0 , DM_out[7:0]};
+            3'b101:   DM_out_2_reg      =   {16'd0 , DM_out[15:0]};
             default:  DM_out_2_reg      =   32'd0;
         endcase
     end

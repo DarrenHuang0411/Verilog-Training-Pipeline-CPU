@@ -23,7 +23,9 @@ module ControlUnit (
                         ADD_type    =   3'b010,// I, S, U(AUIPC), J_type
                         I_JAL_type  =   3'b011,
                         B_type      =   3'b100,
-                        U_LUI_type  =   3'b101;
+                        U_LUI_type  =   3'b101,
+                        // F_type      =   3'b110,
+                        CSR_type    =   3'b111;
     //Imm
     localparam  [2:0]   Imm_I       =   3'b000,
                         Imm_S       =   3'b001,
@@ -184,6 +186,23 @@ module ControlUnit (
                 reg_file_write  =   1'b1;
                 branch_signal   =   J_Branch;                
             end
+            //CSR
+            7'b1110011: begin
+                ALU_Ctrl_op     =   CSR_type;
+                Imm_type        =   ;
+
+                ALU_rs2_sel     =   ;               
+                EXE_pc_sel      =   ; 
+                MEM_rd_sel      =   1;   // 1: pc           , 0: from_alu(rd) 
+
+                DM_read         =   1'b0;
+                DM_write        =   1'b0;
+
+                WB_data_sel     =   1'b0;
+                reg_file_write  =   1'b1;
+                branch_signal   =   J_Branch;                  
+            end
+
             default: begin //don't care
                 ALU_Ctrl_op     =   ADD_type;
                 Imm_type        =   Imm_I;     

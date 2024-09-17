@@ -53,7 +53,7 @@ module EXE_ALU (
             ALU_sltu:   ALU_out =   (rs1 < rs2) ? 32'b1 : 32'b0;
             ALU_xor:    ALU_out =   rs1 ^   rs2;
             ALU_srl:    ALU_out =   rs1 >>  rs2[4:0];
-            ALU_sra:    ALU_out =   s_rs1 >>  rs2[4:0];
+            ALU_sra:    ALU_out =   s_rs1 >>>  rs2[4:0];
             ALU_or :    ALU_out =   rs1 |   rs2;
             ALU_and:    ALU_out =   rs1 &   rs2; 
             ALU_JALR:   ALU_out =   {R_add[31:1], 1'b0}; //why
@@ -67,8 +67,8 @@ module EXE_ALU (
         case (ALU_ctrl)
             ALU_beq :   zeroflag    =   (rs1 == rs2) ? 1'b1: 1'b0;
             ALU_bne :   zeroflag    =   (rs1 != rs2) ? 1'b1: 1'b0;
-            ALU_blt :   zeroflag    =   (rs1 <  rs2) ? 1'b1: 1'b0;
-            ALU_bge :   zeroflag    =   (rs1 >= rs2) ? 1'b1: 1'b0;
+            ALU_blt :   zeroflag    =   (s_rs1 <  s_rs2) ? 1'b1: 1'b0;
+            ALU_bge :   zeroflag    =   (s_rs1 >= s_rs2) ? 1'b1: 1'b0;
             ALU_bltu:   zeroflag    =   (rs1 <  rs2) ? 1'b1: 1'b0;
             ALU_bgeu:   zeroflag    =   (rs1 >= rs2) ? 1'b1: 1'b0;  
             default:    zeroflag    =   1'b0;
