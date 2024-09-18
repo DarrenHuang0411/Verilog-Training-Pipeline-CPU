@@ -22,7 +22,7 @@ module MEM_Stage (
     //------------------------- DM -------------------------//    
     output  logic                       chip_select,
     //------------------------- SW -------------------------// 
-    output  logic [3:0]                 w_eb,
+    output  logic [`DATA_WIDTH -1:0]    w_eb,
     output  logic [`DATA_WIDTH -1:0]    DM_in,
 
     //------------------------- LW -------------------------//     
@@ -39,17 +39,23 @@ module MEM_Stage (
     assign  MEM_WB_data_sel = EXE_MEM_WB_data_sel;
     assign  MEM_WB_reg_file_write = EXE_MEM_reg_file_write;
 
+
+//----------------------- R/W for WEB -----------------------//
+    alwa
+
+
+
 //------------------------ SW -------------------------//
     //---------------------- En -----------------------//
     always_comb begin
         //active low
-        w_eb    =   4'b1111;
+        w_eb    =   32'hffff_ffff;//4'b1111;
         if(MEM_DMwrite_sel) begin
             case (EXE_funct3)
-                3'b000:   w_eb[MEM_ALU[1:0]]              =   1'b0;    //SB 
-                3'b001:   w_eb[{MEM_ALU[1],1'b0} +: 2]    =   2'b0;    //SH
-                3'b010:   w_eb                              =   4'b0000; //SW
-                default:  w_eb                              =   4'b0000;
+                3'b000:   w_eb[{MEM_ALU[1:0],3'b0} +: 8]  =    8'b0;    //SB 
+                3'b001:   w_eb[{MEM_ALU[1],4'b0}  +: 16]  =   16'b0;    //SH
+                3'b010:   w_eb                            =   32'b0; //SW
+                default:  w_eb                            =   32'b0;
             endcase
         end
     end

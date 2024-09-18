@@ -186,22 +186,22 @@ module ControlUnit (
                 reg_file_write  =   1'b1;
                 branch_signal   =   J_Branch;                
             end
-            //CSR
-            7'b1110011: begin
-                ALU_Ctrl_op     =   CSR_type;
-                Imm_type        =   ;
+            // //CSR
+            // 7'b1110011: begin
+            //     ALU_Ctrl_op     =   CSR_type;
+            //     Imm_type        =   ;
 
-                ALU_rs2_sel     =   ;               
-                EXE_pc_sel      =   ; 
-                MEM_rd_sel      =   1;   // 1: pc           , 0: from_alu(rd) 
+            //     ALU_rs2_sel     =   ;               
+            //     EXE_pc_sel      =   ; 
+            //     MEM_rd_sel      =   1;   // 1: pc           , 0: from_alu(rd) 
 
-                DM_read         =   1'b0;
-                DM_write        =   1'b0;
+            //     DM_read         =   1'b0;
+            //     DM_write        =   1'b0;
 
-                WB_data_sel     =   1'b0;
-                reg_file_write  =   1'b1;
-                branch_signal   =   J_Branch;                  
-            end
+            //     WB_data_sel     =   1'b0;
+            //     reg_file_write  =   1'b1;
+            //     branch_signal   =   J_Branch;                  
+            // end
 
             default: begin //don't care
                 ALU_Ctrl_op     =   ADD_type;
