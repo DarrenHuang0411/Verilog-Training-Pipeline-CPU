@@ -122,7 +122,7 @@ module top (
     reg  [`DATA_WIDTH -1:0]  MEM_WB_rd_DM;
     reg  [4:0]               MEM_WB_rd_addr;   
     wire [`DATA_WIDTH -1:0]  DM_MEM_Dout;
-
+    wire                     SRAM_web;  
     wire [`DATA_WIDTH -1:0]  wire_MEM_WB_rd_dir;
     wire [`DATA_WIDTH -1:0]  wire_MEM_WB_rd_DM;
     wire [4:0]               wire_MEM_WB_rd_addr;   
@@ -151,8 +151,8 @@ module top (
     );
 
     SRAM_wrapper IM1(
-        .CLK(clk),
-        .CEB(1'b1),
+        .CLK(~clk), .RST(rst),
+        .CEB(1'b0),
         .WEB(1'b1),
         // .OE(1'b1),
         .BWEB(32'hffff_ffff),
@@ -270,6 +270,7 @@ module top (
 
         //------------------------- DM -------------------------//    
         .chip_select      (MEM_DM_CS),
+        .SRAM_web         (SRAM_web),
         //------------------------- SW -------------------------// 
         .w_eb             (DM_write_enable),
         .DM_in            (MEM_DM_Din),
@@ -280,9 +281,9 @@ module top (
     );
 
     SRAM_wrapper DM1(
-        .CLK    (clk), 
+        .CLK    (~clk), .RST(rst),
         .CEB    (MEM_DM_CS), // Chip Enable
-        .WEB    (EXE_MEM_DM_read),
+        .WEB    (SRAM_web),
         .BWEB   (DM_write_enable),
         //.OE (EXE_MEM_DM_read),
         //.WEB(DM_write_enable),

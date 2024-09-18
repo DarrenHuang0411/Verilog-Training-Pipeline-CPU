@@ -21,6 +21,7 @@ module MEM_Stage (
 
     //------------------------- DM -------------------------//    
     output  logic                       chip_select,
+    output  logic                       SRAM_web,
     //------------------------- SW -------------------------// 
     output  logic [`DATA_WIDTH -1:0]    w_eb,
     output  logic [`DATA_WIDTH -1:0]    DM_in,
@@ -33,17 +34,20 @@ module MEM_Stage (
     //wire [:] MEM_rd_src;
 
 //----------------------- rd_sel -----------------------//
+    assign  chip_select     = ~(MEM_DMread_sel | MEM_DMwrite_sel);
     assign  MEM_WB_rd_addr  =  EXE_MEM_rd_addr;
     assign  MEM_rd_data     = (MEM_rd_sel) ? MEM_pc : MEM_ALU;
-    assign  chip_select     = MEM_DMread_sel | MEM_DMwrite_sel;
     assign  MEM_WB_data_sel = EXE_MEM_WB_data_sel;
     assign  MEM_WB_reg_file_write = EXE_MEM_reg_file_write;
 
-
 //----------------------- R/W for WEB -----------------------//
-    alwa
-
-
+    always_comb begin
+        SRAM_web    =   1'b0;           
+        if (MEM_DMread_sel)
+            SRAM_web    =   1'b1;
+        else if (MEM_DMwrite_sel)
+            SRAM_web    =   1'b0;
+    end
 
 //------------------------ SW -------------------------//
     //---------------------- En -----------------------//
@@ -53,7 +57,7 @@ module MEM_Stage (
         if(MEM_DMwrite_sel) begin
             case (EXE_funct3)
                 3'b000:   w_eb[{MEM_ALU[1:0],3'b0} +: 8]  =    8'b0;    //SB 
-                3'b001:   w_eb[{MEM_ALU[1],4'b0}  +: 16]  =   16'b0;    //SH
+                3'b001:   w_eb[{MEM_ALU[1]  ,4'b0} +:16]  =   16'b0;    //SH
                 3'b010:   w_eb                            =   32'b0; //SW
                 default:  w_eb                            =   32'b0;
             endcase
