@@ -11,6 +11,7 @@ module ControlUnit (
     output  logic           DM_read,
     output  logic           DM_write,
     output  logic           reg_file_write,
+    output  logic           reg_file_FP_write,
 
     output  logic           WB_data_sel
 
@@ -20,11 +21,11 @@ module ControlUnit (
     //Type
     localparam [2:0]    R_type      =   3'b000,
                         I_type      =   3'b001,
-                        ADD_type    =   3'b010,// I, S, U(AUIPC), J_type
+                        ADD_type    =   3'b010,// I, S, U(AUIPC), J_type, F_type(FLW)
                         I_JAL_type  =   3'b011,
                         B_type      =   3'b100,
                         U_LUI_type  =   3'b101,
-                        // F_type      =   3'b110,
+                        F_type      =   3'b110,
                         CSR_type    =   3'b111;
     //Imm
     localparam  [2:0]   Imm_I       =   3'b000,
@@ -55,8 +56,8 @@ module ControlUnit (
 
                 WB_data_sel     =   1'b0;                
                 reg_file_write  =   1'b1;
+                reg_file_FP_write   =   1'b0; // 1: use        , 0: not use
                 branch_signal   =   N_Branch;
-
             end
             //I-type - LW/LB/LH/LHU/LBU
             7'b0000011: begin
@@ -72,7 +73,25 @@ module ControlUnit (
 
                 WB_data_sel     =   1'b1;
                 reg_file_write  =   1'b1;
+                reg_file_FP_write   =   1'b0; // 1: use        , 0: not use
                 branch_signal   =   N_Branch;                           
+            end
+            //F-type - FLW
+            7'b0000111: begin
+                ALU_Ctrl_op     =   ADD_type;
+                Imm_type        =   Imm_I;
+
+                ALU_rs2_sel     =   1'b0;   // 1: rs2 (default), 0: Imm 
+                EXE_pc_sel      =   1'b0;   // 1: pc+imm       , 0: pc+4 or don't care
+                MEM_rd_sel      =   1'b0;   // 1: pc           , 0: from_alu(rd)
+
+                DM_read         =   1'b1;
+                DM_write        =   1'b0;
+
+                WB_data_sel     =   1'b1;
+                reg_file_write  =   1'b0;
+                reg_file_FP_write   =   1'b1; // 1: use        , 0: not use
+                branch_signal   =   N_Branch;                      
             end
             //I-type
             7'b0010011: begin
@@ -88,6 +107,7 @@ module ControlUnit (
 
                 WB_data_sel     =   1'b0;
                 reg_file_write  =   1'b1;
+                reg_file_FP_write   =   1'b0; // 1: use        , 0: not use                
                 branch_signal   =   N_Branch;
             end
             //I-type - JALR
@@ -104,6 +124,7 @@ module ControlUnit (
 
                 WB_data_sel     =   1'b0;
                 reg_file_write  =   1'b1;
+                reg_file_FP_write   =   1'b0; // 1: use        , 0: not use                
                 branch_signal   =   JAL_Branch;
             end
             //S-type
@@ -120,6 +141,7 @@ module ControlUnit (
 
                 WB_data_sel     =   1'b0;
                 reg_file_write  =   1'b0;
+                reg_file_FP_write   =   1'b0; // 1: use        , 0: not use                
                 branch_signal   =   N_Branch;                             
             end
             //B-type
@@ -136,6 +158,7 @@ module ControlUnit (
 
                 WB_data_sel     =   1'b0;
                 reg_file_write  =   1'b0;
+                reg_file_FP_write   =   1'b0; // 1: use        , 0: not use                   
                 branch_signal   =   B_Branch;                
             end
             //U-type - AUIPC
@@ -152,6 +175,7 @@ module ControlUnit (
 
                 WB_data_sel     =   1'b0;
                 reg_file_write  =   1'b1;
+                reg_file_FP_write   =   1'b0; // 1: use        , 0: not use                   
                 branch_signal   =   N_Branch;                    
             end
             //U-type - LUI
@@ -168,6 +192,7 @@ module ControlUnit (
 
                 WB_data_sel     =   1'b0;
                 reg_file_write  =   1'b1;
+                reg_file_FP_write   =   1'b0; // 1: use        , 0: not use                   
                 branch_signal   =   N_Branch;                        
             end
             //J-type
@@ -184,6 +209,7 @@ module ControlUnit (
 
                 WB_data_sel     =   1'b0;
                 reg_file_write  =   1'b1;
+                reg_file_FP_write   =   1'b0; // 1: use        , 0: not use                   
                 branch_signal   =   J_Branch;                
             end
             // //CSR
@@ -216,6 +242,7 @@ module ControlUnit (
 
                 WB_data_sel     =   1'b0;
                 reg_file_write  =   1'b0;
+                reg_file_FP_write   =   1'b0; // 1: use        , 0: not use                   
                 branch_signal   =   N_Branch;                                       
             end
         endcase

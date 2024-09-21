@@ -9,9 +9,13 @@ module ID_Stage (
   input   wire    [4:0]               reg_rd_adddr,
   input   wire    [`DATA_WIDTH -1:0]  reg_rd_data,
   input   wire                        reg_write,
+  input   wire                        reg_FP_write,
 
   output  wire    [`DATA_WIDTH -1:0]  rs1_data,
   output  wire    [`DATA_WIDTH -1:0]  rs2_data,
+
+  output  wire    [`DATA_WIDTH -1:0]  rs1_FP_data,
+  output  wire    [`DATA_WIDTH -1:0]  rs2_FP_data,
 
   output  wire    [`FUNCTION_3 -1:0]  funct3,
   output  wire    [`FUNCTION_7 -1:0]  funct7,
@@ -80,6 +84,20 @@ module ID_Stage (
         .rs1_data       (rs1_data),
         .rs2_data       (rs2_data)
     );
+
+    ID_FP_RegFile  ID_FP_RegFile_inst(
+        .clk(~clk), .rst(rst),
+        .reg_write      (reg_FP_write),//Ctrl
+
+        .rs1_addr       (regf_rs1_addr), 
+        .rs2_addr       (regf_rs2_addr), 
+
+        .rd_addr        (reg_rd_adddr),
+        .rd_data        (reg_rd_data),        
+        .rs1_FP_data    (rs1_FP_data),
+        .rs2_FP_data    (rs2_FP_data)
+    );
+
 
 //---------------- Immediate_Generator ----------------//
     ID_ImmGe  ID_ImmGe_inst(
