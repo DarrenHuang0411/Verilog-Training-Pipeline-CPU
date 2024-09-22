@@ -144,6 +144,24 @@ module ControlUnit (
                 reg_file_FP_write   =   1'b0; // 1: use        , 0: not use                
                 branch_signal   =   N_Branch;                             
             end
+            //F-type - FSW
+            7'b0100111: begin
+                ALU_Ctrl_op     =   ADD_type;
+                Imm_type        =   Imm_S;
+
+                ALU_rs2_sel     =   1'b0;   // 1: rs2 (default), 0: Imm 
+                EXE_pc_sel      =   1'b0;   // 1: pc+imm       , 0: pc+4 or don't care
+                MEM_rd_sel      =   1'b0;   // 1: pc           , 0: from_alu(rd)
+
+                DM_read         =   1'b1;
+                DM_write        =   1'b0;
+
+                WB_data_sel     =   1'b1;
+                reg_file_write  =   1'b0;
+                reg_file_FP_write   =   1'b0; // 1: use        , 0: not use
+                branch_signal   =   N_Branch;                      
+            end
+        
             //B-type
             7'b1100011: begin
                 ALU_Ctrl_op     =   B_type; 

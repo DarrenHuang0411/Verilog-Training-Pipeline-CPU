@@ -6,11 +6,11 @@
 
 module EXE_FP_ALU (
 //Ctrl
-    input   wire [4:0] ALU_ctrl,
+    input   wire [4:0] FP_ALU_ctrl,
 //I/O
     input   wire [`DATA_WIDTH -1:0] rs1,
     input   wire [`DATA_WIDTH -1:0] rs2,
-    output  reg  [`DATA_WIDTH -1:0] ALU_FP_out,
+    output  reg  [`DATA_WIDTH -1:0] ALU_FP_out //(check whether 32 bit)
     //output  
     //output  reg  zeroflag
 );
@@ -45,25 +45,54 @@ module EXE_FP_ALU (
                         ALU_FP_add  =   5'd22,
                         ALU_FP_sub  =   5'd23;                        
 
-    wire signed [`DATA_WIDTH -1:0] s_rs1;
-    wire signed [`DATA_WIDTH -1:0] s_rs2;
-    wire        [`DATA_WIDTH -1:0] R_add;
-    wire signed [`MULT_DATA_WIDTH -1:0] Mult_rd_ss;
-    wire signed [`MULT_DATA_WIDTH -1:0] Mult_rd_su;
-    wire        [`MULT_DATA_WIDTH -1:0] Mult_rd_uu;
+    // wire signed [`DATA_WIDTH -1:0] s_rs1;
+    // wire signed [`DATA_WIDTH -1:0] s_rs2;
+    // wire        [`DATA_WIDTH -1:0] R_add;
+    // wire signed [`MULT_DATA_WIDTH -1:0] Mult_rd_ss;
+    // wire signed [`MULT_DATA_WIDTH -1:0] Mult_rd_su;
+    // wire        [`MULT_DATA_WIDTH -1:0] Mult_rd_uu;
 
-    assign R_add        =   rs1 +   rs2;
-    assign s_rs1        =   rs1; //deal with the previous stage
-    assign s_rs2        =   rs2;
-    assign Mult_rd_ss   =   s_rs1 * s_rs2;
-    assign Mult_rd_su   =   s_rs1 * $signed({1'b0, rs2}); // mult_s*u
-    assign Mult_rd_uu   =   rs1 * rs2;
+    // // assign R_add        =   rs1 +   rs2;
+    // // assign s_rs1        =   rs1; //deal with the previous stage
+    // // assign s_rs2        =   rs2;
+    // // assign Mult_rd_ss   =   s_rs1 * s_rs2;
+    // // assign Mult_rd_su   =   s_rs1 * $signed({1'b0, rs2}); // mult_s*u
+    // // assign Mult_rd_uu   =   rs1 * rs2;
+
+    function [`EXP -1:0] abs_exp_diff;
+        input [`EXP -1:0] rs1_exp;
+        input [`EXP -1:0] rs2_exp;
+        begin
+            if (rs1 >= rs2) begin
+                abs_exp_diff    =   rs1 - rs2;
+            end 
+            else begin
+                abs_exp_diff    =   rs2 - rs1;    
+            end
+        end       
+    endfunction
+
+//------------------------
+    always_comb begin :
+        unique if (abs_exp_diff == 0)
+
+        else if
+
+        else 
+    end
+
+
+
+
+
+
 
 //------------------------- Basic -------------------------//
     always_comb begin
         case (ALU_ctrl)
             ALU_FP_add:;
             ALU_FP_sub:;
+            default:    ALU_FP_out  =   32'd0;  
         endcase  
     end
 endmodule

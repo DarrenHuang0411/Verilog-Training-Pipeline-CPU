@@ -8,4 +8,7 @@
     `define OP_CODE         7
     `define FUNCTION_3      3
     `define FUNCTION_7      7
+    //IEEE 754
+    `define EXP             8
+        
 `endif

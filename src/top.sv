@@ -46,6 +46,8 @@ module top (
     reg [`DATA_WIDTH -1:0]  ID_EXE_pc_in;
     reg [`DATA_WIDTH -1:0]  ID_EXE_rs1;
     reg [`DATA_WIDTH -1:0]  ID_EXE_rs2;
+    reg [`DATA_WIDTH -1:0]  ID_EXE_rs1_FP;
+    reg [`DATA_WIDTH -1:0]  ID_EXE_rs2_FP;
 
     reg [`FUNCTION_3 -1:0]  ID_EXE_function3;
     reg [`FUNCTION_7 -1:0]  ID_EXE_function7;
@@ -57,7 +59,9 @@ module top (
     wire [`DATA_WIDTH -1:0]  wire_ID_EXE_pc_in;
     wire [`DATA_WIDTH -1:0]  wire_ID_EXE_rs1;
     wire [`DATA_WIDTH -1:0]  wire_ID_EXE_rs2;
-    
+    wire [`DATA_WIDTH -1:0]  wire_ID_EXE_rs1_FP;
+    wire [`DATA_WIDTH -1:0]  wire_ID_EXE_rs2_FP;
+
     wire [`FUNCTION_3 -1:0]  wire_ID_EXE_function3    ;
     wire [`FUNCTION_7 -1:0]  wire_ID_EXE_function7    ;
     wire [4:0]               wire_ID_EXE_rs1_addr     ;
@@ -173,7 +177,9 @@ module top (
 
         .rs1_data       (wire_ID_EXE_rs1),
         .rs2_data       (wire_ID_EXE_rs2),
-    //input   wire [:] rd_addr;
+        .rs1_FP_data    (wire_ID_EXE_rs1_FP),
+        .rs2_FP_data    (wire_ID_EXE_rs2_FP),
+
         .funct3         (wire_ID_EXE_function3),
         .funct7         (wire_ID_EXE_function7),
         .rs1_addr       (wire_ID_EXE_rs1_addr),
@@ -356,6 +362,9 @@ module top (
             ID_EXE_pc_in            <=  0;
             ID_EXE_rs1              <=  0;   
             ID_EXE_rs2              <=  0;
+            ID_EXE_rs1_FP           <=  0;
+            ID_EXE_rs2_FP           <=  0;
+
             ID_EXE_function3        <=  0;
             ID_EXE_function7        <=  0;
             ID_EXE_rs1_addr         <=  0;
@@ -376,6 +385,9 @@ module top (
             ID_EXE_pc_in            <= wire_ID_EXE_pc_in;
             ID_EXE_rs1              <= wire_ID_EXE_rs1;
             ID_EXE_rs2              <= wire_ID_EXE_rs2;
+            ID_EXE_rs1_FP           <= wire_ID_EXE_rs1_FP;
+            ID_EXE_rs2_FP           <= wire_ID_EXE_rs2_FP;
+
             ID_EXE_function3        <= wire_ID_EXE_function3    ;
             ID_EXE_function7        <= wire_ID_EXE_function7    ;
             ID_EXE_rs1_addr         <= wire_ID_EXE_rs1_addr     ;

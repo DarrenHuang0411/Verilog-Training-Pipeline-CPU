@@ -24,12 +24,17 @@ module EXE_Stage (
 
     input   wire [1:0]              ForwardA_sel,
     input   wire [1:0]              ForwardB_sel,
+    input   wire [1:0]              ForwardA_FP_sel,
+    input   wire [1:0]              ForwardB_FP_sel,
+
     //Data
     input   wire [`DATA_WIDTH -1:0] PC_EXE_in,
     input   wire [`DATA_WIDTH -1:0] EXE_rs1,
     input   wire [`DATA_WIDTH -1:0] EXE_rs2,
     input   wire [`DATA_WIDTH -1:0] WB_rd_data,
     input   wire [`DATA_WIDTH -1:0] MEM_rd_data,
+    input   wire [`DATA_WIDTH -1:0] EXE_rs1_FP,
+    input   wire [`DATA_WIDTH -1:0] EXE_rs2_FP,
     
     input   wire [`DATA_WIDTH -1:0] EXE_imm, 
     input   wire [`FUNCTION_3 -1:0] EXE_function_3,
@@ -51,29 +56,29 @@ module EXE_Stage (
 //<------------------- parameter ------------------->
     reg  [`DATA_WIDTH -1:0] Mux2_ALU;
     wire [`DATA_WIDTH -1:0] Mux4_rs2;
-    wire [4:0] ALU_ctrl;
+    wire [4:0]              ALU_ctrl;
     wire [`DATA_WIDTH -1:0] Add1_Mux1;
     wire [`DATA_WIDTH -1:0] Add2_Mux1;
 
 //------------------- PC+imm -------------------//
-assign  Add1_Mux1   =   PC_EXE_in   +    EXE_imm;
+    assign  Add1_Mux1   =   PC_EXE_in   +    EXE_imm;
 //------------------- PC+4 -------------------//
-assign  Add2_Mux1   =   PC_EXE_in   +   32'd4;
+    assign  Add2_Mux1   =   PC_EXE_in   +   32'd4;
 
-////Mux1////
-assign  pc_sel_o        =   (pc_mux_sel)  ?   Add1_Mux1   :   Add2_Mux1;
+//--------------- Mux1(PC Select) --------------//
+    assign  pc_sel_o        =   (pc_mux_sel)  ?   Add1_Mux1   :   Add2_Mux1;
 
-assign  EXE_PC_imm      =   Add1_Mux1;
-assign  EXE_MEM_rd_sel  =   ID_EXE_rd_sel;
-assign  EXE_MEM_DM_read =   ID_EXE_DM_read;
-assign  EXE_MEM_DM_write=   ID_EXE_DM_write;
+    assign  EXE_PC_imm      =   Add1_Mux1;
+    assign  EXE_MEM_rd_sel  =   ID_EXE_rd_sel;
+    assign  EXE_MEM_DM_read =   ID_EXE_DM_read;
+    assign  EXE_MEM_DM_write=   ID_EXE_DM_write;
 
-assign  EXE_MEM_function_3  =   EXE_function_3;
-assign  EXE_MEM_rd_addr =   ID_EXE_rd_addr;
-assign  EXE_MEM_WB_data_sel =   ID_EXE_WB_data_sel;
-assign  EXE_MEM_reg_file_write  =   ID_EXE_reg_file_write;
+    assign  EXE_MEM_function_3  =   EXE_function_3;
+    assign  EXE_MEM_rd_addr =   ID_EXE_rd_addr;
+    assign  EXE_MEM_WB_data_sel =   ID_EXE_WB_data_sel;
+    assign  EXE_MEM_reg_file_write  =   ID_EXE_reg_file_write;
 
-////Mux2/// (RS1_data)
+//--------------- Mux2 (int_RS1_data) --------------//
     always_comb begin 
         case (ForwardA_sel) //(ForwardA_sel)
             2'd0:   Mux2_ALU    =   EXE_rs1;
@@ -82,8 +87,7 @@ assign  EXE_MEM_reg_file_write  =   ID_EXE_reg_file_write;
             default: Mux2_ALU    =  32'd0; 
         endcase    
     end
-
-////Mux3/// (RS2_data)
+//--------------- Mux3 (int_RS2_data) --------------//
     always_comb begin 
         case (ForwardB_sel) //(ForwardB_sel)
             2'd0:   Mux3_ALU    =   EXE_rs2;
@@ -112,5 +116,44 @@ assign  EXE_MEM_reg_file_write  =   ID_EXE_reg_file_write;
         .function_7 (EXE_function_7),
         .ALU_ctrl   (ALU_ctrl)
     );
+
+//--------------- Mux_FP (FP_RS1_data) --------------//
+    always_comb begin 
+        case (ForwardA_FP_sel) //(ForwardA_sel)
+            2'd0:       Mux_rs1_FP  =   EXE_rs1_FP;
+            2'd1:       Mux_rs1_FP  =   MEM_rd_data; 
+            2'd2:       Mux_rs1_FP  =   WB_rd_data;
+            default:    Mux_rs1_FP  =  32'd0; 
+        endcase    
+    end
+//--------------- Mux_FP (FP_RS2_data) --------------//
+    always_comb begin 
+        case (ForwardB_FP_sel) //(ForwardB_sel)
+            2'd0:       Mux_rs2_FP  =   EXE_rs2_FP;
+            2'd1:       Mux_rs2_FP  =   MEM_rd_data;
+            2'd2:       Mux_rs2_FP  =   WB_rd_data;
+            default:    Mux_rs2_FP    =  32'd0; 
+        endcase    
+    end
+
+//-------------- EXE_FP_ALU -------------------------//
+    EXE_FP_ALU EXE_FP_ALU_inst(
+        // .ALU_ctrl(ALU_ctrl),
+        // .rs1(Mux2_ALU), 
+        // .rs2(Mux4_rs2),
+        // .ALU_out(ALU_o), 
+        // .zeroflag(zeroflag)
+    );
+
+// //------------------------- EXE_ALU_Ctrl -------------------------//
+//     EXE_ALU_Ctrl EXE_ALU_Ctrl_inst(
+//         .ALU_op     (ALU_op),
+//         .function_3 (EXE_function_3),
+//         .function_7 (EXE_function_7),
+//         .ALU_ctrl   (ALU_ctrl)
+//     );
+
+
+
 
 endmodule
