@@ -30,7 +30,7 @@ always_ff @(posedge clk or posedge rst)
                 x_fp_reg[i]  <=  32'b0;
             end
         end
-        else if (reg_write && rd_addr != 5'b0)
+        else if (reg_write)
             x_fp_reg[rd_addr]  <=  rd_data;
     end
 

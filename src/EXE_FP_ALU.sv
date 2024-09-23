@@ -59,40 +59,48 @@ module EXE_FP_ALU (
     // // assign Mult_rd_su   =   s_rs1 * $signed({1'b0, rs2}); // mult_s*u
     // // assign Mult_rd_uu   =   rs1 * rs2;
 
-    function [`EXP -1:0] abs_exp_diff;
+    assign  signed_rs1      =   ;
+    assign  signed_rs2      =   ;
+    assign  exp_rs1         =   ;
+    assign  exp_rs2         =   ;
+    assign  fraction_rs1    =   ;
+    assign  fraction_rs2    =   ;
+
+     signed_out             =    new_signed_rs1;
+     exp_out_temp1          =    new_exp_rs1;
+    assign  ALU_FP_out      =    {signed_out,exp_fraact_out} : {};
+
+    // //Exception flag sets 1 if either one of the exponent is 255.
+    // //assign Exception = (&operand_a[30:23]) | (&operand_b[30:23]);
+
+
+    function [`EXP :0] abs_exp_diff;
         input [`EXP -1:0] rs1_exp;
         input [`EXP -1:0] rs2_exp;
         begin
-            if (rs1 >= rs2) begin
-                abs_exp_diff    =   rs1 - rs2;
+            if (rs1_exp >= rs2_exp) begin
+                abs_exp_diff    =   rs1_exp - rs2_exp;
             end 
             else begin
-                abs_exp_diff    =   rs2 - rs1;    
+                abs_exp_diff    =   rs2_exp - rs1_exp;    
             end
         end       
     endfunction
 
 //------------------------
-    always_comb begin :
-        unique if (abs_exp_diff == 0)
-
-        else if
-
+    always_comb begin
+        unique if (abs_exp_diff(rs1[30:23], rs2[30:23]) == 0)
+            change_flag ==  0;
         else 
     end
-
-
-
-
-
 
 
 //------------------------- Basic -------------------------//
     always_comb begin
         case (ALU_ctrl)
-            ALU_FP_add:;
-            ALU_FP_sub:;
-            default:    ALU_FP_out  =   32'd0;  
+            ALU_FP_add: signed_out  =   new_signed_rs1;
+            ALU_FP_sub: signed_out  =   (change_flag) ? !(new_signed_rs1) : new_signed_rs1
+            default:    signed_out  =   new_signed_rs1;
         endcase  
     end
 endmodule
