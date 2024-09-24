@@ -3,12 +3,15 @@ module MEM_Stage (
     input   wire                        rst, 
     //------------------- Ctrl sig reg -----------------------//
     input   logic                       MEM_rd_sel,
+    input   logic                       MEM_Din_sel,
     input   logic                       MEM_DMread_sel, 
     input   logic                       MEM_DMwrite_sel,
     input   logic                       EXE_MEM_WB_data_sel,
     input   logic                       EXE_MEM_reg_file_write,
+    input   logic                       EXE_MEM_reg_file_FP_write,
     output  logic                       MEM_WB_data_sel,
     output  logic                       MEM_WB_reg_file_write,
+    output  logic                       MEM_WB_reg_file_FP_write,
     //----------------------- MEM_I/O -----------------------//
     input   wire  [`DATA_WIDTH -1:0]    MEM_pc,
     input   wire  [`DATA_WIDTH -1:0]    MEM_ALU,
@@ -16,7 +19,8 @@ module MEM_Stage (
     output  wire  [4:0]                 MEM_WB_rd_addr,
     //------------------------ Data ------------------------//  
     input   logic [`FUNCTION_3 -1:0]    EXE_funct3,
-    input   logic [`DATA_WIDTH -1:0]    EXE_rs2_data,     
+    input   logic [`DATA_WIDTH -1:0]    EXE_rs2_data,
+    input   logic [`DATA_WIDTH -1:0]    EXE_rs2_FP_data,      
     output  wire  [`DATA_WIDTH -1:0]    MEM_rd_data,
 
     //------------------------- DM -------------------------//    
@@ -39,6 +43,7 @@ module MEM_Stage (
     assign  MEM_rd_data     = (MEM_rd_sel) ? MEM_pc : MEM_ALU;
     assign  MEM_WB_data_sel = EXE_MEM_WB_data_sel;
     assign  MEM_WB_reg_file_write = EXE_MEM_reg_file_write;
+    assign  MEM_WB_reg_file_FP_write = EXE_MEM_reg_file_FP_write;
 
 //----------------------- R/W for WEB -----------------------//
     always_comb begin
@@ -68,9 +73,9 @@ module MEM_Stage (
         //--------------- DM_in reset -----------------//
         DM_in   =   32'd0;
         case (EXE_funct3)
-            3'b000:   DM_in[{MEM_ALU[1:0],3'b0} +: 8]            =   EXE_rs2_data[7:0];    //SB (0~3)
+            3'b000:   DM_in[{MEM_ALU[1:0],3'b0} +: 8]     =   EXE_rs2_data[7:0];    //SB (0~3)
             3'b001:   DM_in[{MEM_ALU[1],4'b0} +: 16]      =   EXE_rs2_data[15:0];   //SH
-            3'b010:   DM_in                                 =   EXE_rs2_data;         //SW
+            3'b010:   DM_in     =   (MEM_Din_sel) ? EXE_rs2_FP_data : EXE_rs2_data;         //SW
             default:  DM_in                                 =   32'd0;
         endcase
     end
@@ -82,7 +87,7 @@ module MEM_Stage (
     //--------------------- data ----------------------//
     always_comb begin
         DM_out_2_reg      =   32'd0;
-        //--------------- DM_in reset -----------------//
+        //--------------- DM_out reset -----------------//
         case (EXE_funct3)
             3'b000:   DM_out_2_reg      =   {{24{DM_out[7]}} , DM_out[7:0]};    //LB(signed)
             3'b001:   DM_out_2_reg      =   {{16{DM_out[7]}} , DM_out[15:0]};   //LH

@@ -1,5 +1,6 @@
 `include "./EXE_ALU_Ctrl.sv"
 `include "./EXE_ALU.sv"
+// `include "./EXE_FP_ALU.sv"
 
 module EXE_Stage (
     //control Signal 
@@ -9,6 +10,9 @@ module EXE_Stage (
 
     input   wire                    ID_EXE_rd_sel,
     output  wire                    EXE_MEM_rd_sel,
+
+    input   wire                    ID_EXE_Din, 
+    output  wire                    EXE_MEM_Din,       
 
     input   wire                    ID_EXE_DM_read, 
     output  wire                    EXE_MEM_DM_read,   
@@ -21,6 +25,9 @@ module EXE_Stage (
 
     input   wire                    ID_EXE_reg_file_write,
     output  wire                    EXE_MEM_reg_file_write,
+
+    input   wire                    ID_EXE_reg_file_FP_write,
+    output  wire                    EXE_MEM_reg_file_FP_write,
 
     input   wire [1:0]              ForwardA_sel,
     input   wire [1:0]              ForwardB_sel,
@@ -47,7 +54,8 @@ module EXE_Stage (
     output  reg                     zeroflag,
     output  reg  [`DATA_WIDTH -1:0] ALU_o,
     output  wire [`DATA_WIDTH -1:0] ALU_o_2_immrs1,
-    output  reg [`DATA_WIDTH -1:0] Mux3_ALU,
+    output  reg  [`DATA_WIDTH -1:0] Mux3_ALU,
+    output  reg  [`DATA_WIDTH -1:0] Mux_rs2_FP,
     
     output  wire [`FUNCTION_3 -1:0] EXE_MEM_function_3,
     output  wire [4:0]              EXE_MEM_rd_addr
@@ -55,6 +63,8 @@ module EXE_Stage (
 
 //<------------------- parameter ------------------->
     reg  [`DATA_WIDTH -1:0] Mux2_ALU;
+    reg  [`DATA_WIDTH -1:0] Mux_rs1_FP;
+
     wire [`DATA_WIDTH -1:0] Mux4_rs2;
     wire [4:0]              ALU_ctrl;
     wire [`DATA_WIDTH -1:0] Add1_Mux1;
@@ -70,6 +80,7 @@ module EXE_Stage (
 
     assign  EXE_PC_imm      =   Add1_Mux1;
     assign  EXE_MEM_rd_sel  =   ID_EXE_rd_sel;
+    assign  EXE_MEM_Din     =   ID_EXE_Din;
     assign  EXE_MEM_DM_read =   ID_EXE_DM_read;
     assign  EXE_MEM_DM_write=   ID_EXE_DM_write;
 
@@ -77,6 +88,7 @@ module EXE_Stage (
     assign  EXE_MEM_rd_addr =   ID_EXE_rd_addr;
     assign  EXE_MEM_WB_data_sel =   ID_EXE_WB_data_sel;
     assign  EXE_MEM_reg_file_write  =   ID_EXE_reg_file_write;
+    assign  EXE_MEM_reg_file_FP_write  =   ID_EXE_reg_file_FP_write;
 
 //--------------- Mux2 (int_RS1_data) --------------//
     always_comb begin 
@@ -137,13 +149,13 @@ module EXE_Stage (
     end
 
 //-------------- EXE_FP_ALU -------------------------//
-    EXE_FP_ALU EXE_FP_ALU_inst(
-        // .ALU_ctrl(ALU_ctrl),
-        // .rs1(Mux2_ALU), 
-        // .rs2(Mux4_rs2),
-        // .ALU_out(ALU_o), 
-        // .zeroflag(zeroflag)
-    );
+    // EXE_FP_ALU EXE_FP_ALU_inst(
+    //     // .ALU_ctrl(ALU_ctrl),
+    //     // .rs1(Mux2_ALU), 
+    //     // .rs2(Mux4_rs2),
+    //     // .ALU_out(ALU_o), 
+    //     // .zeroflag(zeroflag)
+    // );
 
 // //------------------------- EXE_ALU_Ctrl -------------------------//
 //     EXE_ALU_Ctrl EXE_ALU_Ctrl_inst(

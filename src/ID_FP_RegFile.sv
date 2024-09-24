@@ -19,8 +19,8 @@ module ID_FP_RegFile (
     reg [31:0] x_fp_reg[31:0];
 
 //rs1_data rs2_data
-    assign  rs1_fp_data    =   x_fp_reg[rs1_addr];
-    assign  rs2_fp_data    =   x_fp_reg[rs2_addr];
+    assign  rs1_FP_data    =   x_fp_reg[rs1_addr];
+    assign  rs2_FP_data    =   x_fp_reg[rs2_addr];
 
 //R_F 
 always_ff @(posedge clk or posedge rst)

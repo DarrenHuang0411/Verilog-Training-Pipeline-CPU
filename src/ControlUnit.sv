@@ -8,6 +8,7 @@ module ControlUnit (
     output  logic           ALU_rs2_sel,
     output  logic   [1:0]   branch_signal,
     output  logic           MEM_rd_sel,
+    output  logic           Din_sel,
     output  logic           DM_read,
     output  logic           DM_write,
     output  logic           reg_file_write,
@@ -50,7 +51,8 @@ module ControlUnit (
                 ALU_rs2_sel     =   1'b1;   // 1: rs2 (default), 0: Imm
                 EXE_pc_sel      =   1'b0;   // 1: pc+imm       , 0: pc+4 or don't care
                 MEM_rd_sel      =   1'b0;   // 1: pc           , 0: from_alu(rd)
-                
+
+                Din_sel         =   1'b0;   // 1: fp           , 0: int
                 DM_read         =   1'b0;
                 DM_write        =   1'b0;
 
@@ -68,6 +70,7 @@ module ControlUnit (
                 EXE_pc_sel      =   1'b0;   // 1: pc+imm       , 0: pc+4 or don't care
                 MEM_rd_sel      =   1'b0;   // 1: pc           , 0: from_alu(rd)
 
+                Din_sel         =   1'b0;   // 1: fp           , 0: int
                 DM_read         =   1'b1;
                 DM_write        =   1'b0;
 
@@ -84,7 +87,8 @@ module ControlUnit (
                 ALU_rs2_sel     =   1'b0;   // 1: rs2 (default), 0: Imm 
                 EXE_pc_sel      =   1'b0;   // 1: pc+imm       , 0: pc+4 or don't care
                 MEM_rd_sel      =   1'b0;   // 1: pc           , 0: from_alu(rd)
-
+                
+                Din_sel         =   1'b0;   // 1: fp           , 0: int
                 DM_read         =   1'b1;
                 DM_write        =   1'b0;
 
@@ -101,7 +105,8 @@ module ControlUnit (
                 ALU_rs2_sel     =   1'b0;   // 1: rs2 (default), 0: Imm
                 EXE_pc_sel      =   1'b0;   // 1: pc+imm       , 0: pc+4 or don't care 
                 MEM_rd_sel      =   1'b0;   // 1: pc           , 0: from_alu(rd) 
-
+                
+                Din_sel         =   1'b0;   // 1: fp           , 0: int
                 DM_read         =   1'b0;
                 DM_write        =   1'b0;
 
@@ -119,6 +124,7 @@ module ControlUnit (
                 EXE_pc_sel      =   1'b0;   // 1: pc+imm       , 0: pc+4 or don't care
                 MEM_rd_sel      =   1'b1;   // 1: pc           , 0: from_alu(rd) 
 
+                Din_sel         =   1'b0;   // 1: fp           , 0: int
                 DM_read         =   1'b0;
                 DM_write        =   1'b0;
 
@@ -136,6 +142,7 @@ module ControlUnit (
                 EXE_pc_sel      =   1'b0;   // 1: pc+imm       , 0: pc+4 or don't care    
                 MEM_rd_sel      =   1'b0;   // 1: pc           , 0: from_alu(rd) (don't care)
 
+                Din_sel         =   1'b0;   // 1: fp           , 0: int
                 DM_read         =   1'b0;
                 DM_write        =   1'b1;
 
@@ -153,8 +160,9 @@ module ControlUnit (
                 EXE_pc_sel      =   1'b0;   // 1: pc+imm       , 0: pc+4 or don't care
                 MEM_rd_sel      =   1'b0;   // 1: pc           , 0: from_alu(rd)
 
-                DM_read         =   1'b1;
-                DM_write        =   1'b0;
+                Din_sel         =   1'b1;   // 1: fp           , 0: int
+                DM_read         =   1'b0;
+                DM_write        =   1'b1;
 
                 WB_data_sel     =   1'b1;
                 reg_file_write  =   1'b0;
@@ -171,6 +179,7 @@ module ControlUnit (
                 EXE_pc_sel      =   1'b0;   // 1: pc+imm       , 0: pc+4 or don't care   
                 MEM_rd_sel      =   1'b1;   // 1: pc           , 0: from_alu(rd)
 
+                Din_sel         =   1'b0;   // 1: fp           , 0: int
                 DM_read         =   1'b0;
                 DM_write        =   1'b0;
 
@@ -188,6 +197,7 @@ module ControlUnit (
                 EXE_pc_sel      =   1'b1;   // 1: pc+imm       , 0: pc+4 or don't care
                 MEM_rd_sel      =   1'b1;   // 1: pc           , 0: from_alu(rd)
 
+                Din_sel         =   1'b0;   // 1: fp           , 0: int
                 DM_read         =   1'b0;
                 DM_write        =   1'b0;
 
@@ -205,6 +215,7 @@ module ControlUnit (
                 EXE_pc_sel      =   1'b0;   // 1: pc+imm       , 0: pc+4 or don't care
                 MEM_rd_sel      =   1'b0;   // 1: pc           , 0: from_alu(rd)
 
+                Din_sel         =   1'b0;   // 1: fp           , 0: int
                 DM_read         =   1'b0;
                 DM_write        =   1'b0;
 
@@ -222,6 +233,7 @@ module ControlUnit (
                 EXE_pc_sel      =   1'b0;   // 1: pc+imm       , 0: pc+4 or don't care 
                 MEM_rd_sel      =   1'b1;   // 1: pc           , 0: from_alu(rd) 
 
+                Din_sel         =   1'b0;   // 1: fp           , 0: int
                 DM_read         =   1'b0;
                 DM_write        =   1'b0;
 
@@ -238,7 +250,8 @@ module ControlUnit (
             //     ALU_rs2_sel     =   ;               
             //     EXE_pc_sel      =   ; 
             //     MEM_rd_sel      =   1;   // 1: pc           , 0: from_alu(rd) 
-
+            
+            //     Din_sel         =   1'b0;   // 1: fp           , 0: int
             //     DM_read         =   1'b0;
             //     DM_write        =   1'b0;
 
@@ -254,7 +267,8 @@ module ControlUnit (
                 ALU_rs2_sel     =   1'b0;   // 1: rs2 , 0: Imm (default)
                 EXE_pc_sel      =   1'b0;   // 1: pc+imm       , 0: pc+4 or don't care 
                 MEM_rd_sel      =   1'b0;   // 1: pc           , 0: from_alu(rd)                               
-
+                
+                Din_sel         =   1'b0;   // 1: fp           , 0: int
                 DM_read         =   1'b0;
                 DM_write        =   1'b0;
 

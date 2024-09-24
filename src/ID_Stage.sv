@@ -1,4 +1,5 @@
 `include "./ID_RegFile.sv"
+`include "./ID_FP_RegFile.sv"
 `include "./ControlUnit.sv"
 `include "./ID_ImmGe.sv"
 
@@ -30,10 +31,12 @@ module ID_Stage (
     output  wire    [2:0]             ALU_rs2_sel,  //final --> exe
     output  wire    [1:0]             branch_signal,//final --> B ctrl 
     output  wire                      MEM_rd_sel,   //final --> mem
+    output  wire                      MEM_Din_sel,  //final --> mem
     output  wire                      MEM_DM_read,  //final --> mem
     output  wire                      MEM_DM_write, //final --> mem
-    output  wire                      WB_data_sel,
     output  wire                      reg_file_write,
+    output  wire                      reg_file_FP_write,
+    output  wire                      WB_data_sel,
   //
   input   wire    [`DATA_WIDTH -1:0]  in_pc,
   output  wire    [`DATA_WIDTH -1:0]  out_pc
@@ -59,15 +62,17 @@ module ID_Stage (
 //------------------- Control_Unit -------------------//
     ControlUnit ControlUnit_inst(
         .opcode         (opcode),
-        .ALU_Ctrl_op    (ALU_Ctrl_op),
         .Imm_type       (ImmGe),
-        .ALU_rs2_sel    (ALU_rs2_sel),
+        .ALU_Ctrl_op    (ALU_Ctrl_op),
         .EXE_pc_sel     (EXE_pc_sel),
+        .ALU_rs2_sel    (ALU_rs2_sel),
         .branch_signal  (branch_signal),
         .MEM_rd_sel     (MEM_rd_sel),
+        .Din_sel        (MEM_Din_sel),
         .DM_read        (MEM_DM_read),
         .DM_write       (MEM_DM_write),
         .reg_file_write (reg_file_write),
+        .reg_file_FP_write (reg_file_FP_write),
         .WB_data_sel    (WB_data_sel)
     );
 
