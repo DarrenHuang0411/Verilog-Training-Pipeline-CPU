@@ -27,6 +27,12 @@ module Hazard_Ctrl (
             IF_ID_reg_write =   1'b0;
             ctrl_sig_flush  =   1'b1;
         end
+        else if(EXE_read && ((EXE_rd_addr == ID_rs1_addr)||(EXE_rd_addr== ID_rs2_addr))) begin //lw_use_for_FP
+            pc_write        =   1'b0;
+            instr_flush     =   1'b0;
+            IF_ID_reg_write =   1'b0;
+            ctrl_sig_flush  =   1'b1;
+        end
         else begin
             pc_write        =   1'b1;
             instr_flush     =   1'b0;   
