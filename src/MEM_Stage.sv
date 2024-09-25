@@ -2,7 +2,7 @@ module MEM_Stage (
     input   wire                        clk,  
     input   wire                        rst, 
     //------------------- Ctrl sig reg -----------------------//
-    input   logic                       MEM_rd_sel,
+    input   logic [1:0]                 MEM_rd_sel,
     input   logic                       MEM_Din_sel,
     input   logic                       MEM_DMread_sel, 
     input   logic                       MEM_DMwrite_sel,
@@ -15,13 +15,14 @@ module MEM_Stage (
     //----------------------- MEM_I/O -----------------------//
     input   wire  [`DATA_WIDTH -1:0]    MEM_pc,
     input   wire  [`DATA_WIDTH -1:0]    MEM_ALU,
+    input   wire  [`DATA_WIDTH -1:0]    MEM_ALU_FP,
     input   wire  [4:0]                 EXE_MEM_rd_addr,
     output  wire  [4:0]                 MEM_WB_rd_addr,
     //------------------------ Data ------------------------//  
     input   logic [`FUNCTION_3 -1:0]    EXE_funct3,
     input   logic [`DATA_WIDTH -1:0]    EXE_rs2_data,
     input   logic [`DATA_WIDTH -1:0]    EXE_rs2_FP_data,      
-    output  wire  [`DATA_WIDTH -1:0]    MEM_rd_data,
+    output  logic  [`DATA_WIDTH -1:0]   MEM_rd_data,
 
     //------------------------- DM -------------------------//    
     output  logic                       chip_select,
@@ -40,11 +41,18 @@ module MEM_Stage (
 //----------------------- rd_sel -----------------------//
     assign  chip_select     = ~(MEM_DMread_sel | MEM_DMwrite_sel);
     assign  MEM_WB_rd_addr  =  EXE_MEM_rd_addr;
-    assign  MEM_rd_data     = (MEM_rd_sel) ? MEM_pc : MEM_ALU;
     assign  MEM_WB_data_sel = EXE_MEM_WB_data_sel;
     assign  MEM_WB_reg_file_write = EXE_MEM_reg_file_write;
     assign  MEM_WB_reg_file_FP_write = EXE_MEM_reg_file_FP_write;
 
+    always_comb begin
+        case (MEM_rd_sel)
+            2'b00:  MEM_rd_data =   MEM_ALU;
+            2'b01:  MEM_rd_data =   MEM_pc;
+            2'b10:  MEM_rd_data =   MEM_ALU_FP;
+            default: MEM_rd_data    =   MEM_ALU;
+        endcase
+    end
 //----------------------- R/W for WEB -----------------------//
     always_comb begin
         SRAM_web    =   1'b0;           

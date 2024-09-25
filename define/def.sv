@@ -10,5 +10,6 @@
     `define FUNCTION_7      7
     //IEEE 754
     `define EXP             8
+    `define FRACTION        23  
         
 `endif

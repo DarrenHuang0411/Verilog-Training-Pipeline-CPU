@@ -1,7 +1,7 @@
 
 
 module CLZ (
-    input       [23:0]  significand_in,
+    input       [`DATA_WIDTH -1:0]  significand_in,
     output      [ 5:0]  CLZ_result
 );
 
@@ -13,7 +13,7 @@ module CLZ (
       
     count_s16
 
-    assign  CLZ_result  =   
+    assign  CLZ_result  =   (count_s16 + )
 
     always_comb begin
         count_s16   =   0;

@@ -2,7 +2,6 @@
 
 //------------------------ Environment ------------------------//
 `define minus_abs(a,b) ((a>=b) ? a-b : b-a)
-//
 
 module EXE_FP_ALU (
 //Ctrl
@@ -10,83 +9,76 @@ module EXE_FP_ALU (
 //I/O
     input   wire [`DATA_WIDTH -1:0] rs1,
     input   wire [`DATA_WIDTH -1:0] rs2,
-    output  reg  [`DATA_WIDTH -1:0] ALU_FP_out //(check whether 32 bit)
+    output  wire [`DATA_WIDTH -1:0] ALU_FP_out //(check whether 32 bit)
     //output  
     //output  reg  zeroflag
 );
 //------------------------- parameter -------------------------//    
-    //------------------Float Point -----------------------------// 
+    reg     [`DATA_WIDTH -1:0]  FPU_rs1;
+    reg     [`DATA_WIDTH -1:0]  FPU_rs2;    
+    wire    [`DATA_WIDTH -1:0]  significand_rs1;
+    wire    [`DATA_WIDTH -1:0]  significand_rs2;
+    wire    [5:0]               shift;
+    wire    [`DATA_WIDTH -1:0]  significand_rs2_s;
+
+    wire                        signed_out;
+    wire    [`EXP -1:0]         exp_out;
+    wire    [`FRACTION -1:0]    fract_out;
+    
+    reg                         ALU_real_type;
+    wire    [`DATA_WIDTH :0]    significand_add;
+    reg     [`EXP -1:0]         exp_add; 
+    reg     [`FRACTION -1:0]    fract_add;
+
+    //------------------Float Point ---------------------------// 
     localparam  [4:0]   ALU_FP_add  =   5'd22,
                         ALU_FP_sub  =   5'd23;                        
 
-    // wire signed [`DATA_WIDTH -1:0] s_rs1;
-    // wire signed [`DATA_WIDTH -1:0] s_rs2;
-    // wire        [`DATA_WIDTH -1:0] R_add;
-    // wire signed [`MULT_DATA_WIDTH -1:0] Mult_rd_ss;
-    // wire signed [`MULT_DATA_WIDTH -1:0] Mult_rd_su;
-    // wire        [`MULT_DATA_WIDTH -1:0] Mult_rd_uu;
-
-    // // assign R_add        =   rs1 +   rs2;
-    // // assign s_rs1        =   rs1; //deal with the previous stage
-    // // assign s_rs2        =   rs2;
-    // // assign Mult_rd_ss   =   s_rs1 * s_rs2;
-    // // assign Mult_rd_su   =   s_rs1 * $signed({1'b0, rs2}); // mult_s*u
-    // // assign Mult_rd_uu   =   rs1 * rs2;
-
-    assign  signed_rs1      =   ;
-    assign  signed_rs2      =   ;
-    assign  exp_rs1         =   ;
-    assign  exp_rs2         =   ;
-    assign  fraction_rs1    =   ;
-    assign  fraction_rs2    =   ;
-
-    ''''''''''''''''''''''''''''''''''''''''
-        rs1[30:0] >= rs2[30:0]
-
+//------------------------- Basic -------------------------//
+    always_comb begin
+        if (rs1[30:0] >= rs2[30:0]) begin
             FPU_rs1 = rs1;
-            FPU_rs2 = rs2;
-        else
+            FPU_rs2 = rs2;            
+        end 
+        else begin
             FPU_rs1 = rs2;
-            FPU_rs2 = rs1;
-    ''''''''''''''''''''''''''''''''''''''''
-     
-     exp_out_temp1          =    FPU_rs1[30:23];
+            FPU_rs2 = rs1;           
+        end
+    end
 
-    assign  significand_rs1 =   () ? {1'b1, FPU_rs1[22:0]} : {1'b0, FPU_rs1[22:0]};    
-    assign  significand_rs2 =   {1'b1, FPU_rs2[22:0]};   
-    assign  shift           =    minus_abs(rs1[30:23],rs2[30:23]);
+    assign  significand_rs1     =   (FPU_rs1[30:23] == 0) ? {1'b0, FPU_rs1[22:0], 8'd0} : {1'b1, FPU_rs1[22:0], 8'd0};    
+    assign  significand_rs2     =   (FPU_rs1[30:23] == 0) ? {1'b0, FPU_rs2[22:0], 8'd0} : {1'b1, FPU_rs2[22:0], 8'd0}; 
+    assign  shift               =   `minus_abs(rs1[30:23],rs2[30:23]);
+    assign  significand_rs2_s   =   significand_rs2 >> shift;
 
-    assign  signed_out             =    new_signed_rs1;
-    assign  exp_out         =     () ? :  exp_out_temp1;
-    assign  ALU_FP_out      =    {signed_out,exp_fraact_out} : {};
+    assign  signed_out          =   FPU_rs1[31];
+    assign  exp_out             =   (ALU_real_type) ? exp_add   : 8'b0;//exp_sub;
+    assign  fract_out           =   (ALU_real_type) ? fract_add : 23'b0;//fract_sub; 
+    assign  ALU_FP_out          =   {signed_out,exp_out, fract_out};
 
     // //Exception flag sets 1 if either one of the exponent is 255.
     // //assign Exception = (&operand_a[30:23]) | (&operand_b[30:23]);
-
-
-//------------------------
+//------------------------- Operation type -------------------------//
+    //rs1 is fixed larger than rs2 
     always_comb begin
-        unique if (abs_exp_diff(rs1[30:23], rs2[30:23]) == 0)
-            change_flag ==  0;
-        else 
+        case (FP_ALU_ctrl)
+            ALU_FP_add: ALU_real_type   =   !(FPU_rs1[31] ^ FPU_rs2[31]);
+            ALU_FP_sub: ALU_real_type   =   FPU_rs1[31] ^ FPU_rs2[31];
+            default:    ALU_real_type   =   !(FPU_rs1[31] ^ FPU_rs2[31]);
+        endcase
+    end
+//-------------------------- Addition --------------------------------//
+    assign  significand_add    =    significand_rs1 + significand_rs2_s; //32 bit
+    
+    always_comb begin
+        if(significand_add[32]) begin
+            exp_add     =   FPU_rs1[30:23] + 1'b1;
+            fract_add   =   significand_add[31:9];
+        end
+        else begin
+            exp_add     =   FPU_rs1[30:23];
+            fract_add   =   significand_add[30:8];            
+        end
     end
 
-
-//------------------------- Basic -------------------------//
-    always_comb begin
-        case (ALU_ctrl)
-            ALU_FP_add: begin
-                
-            end
-        
-            signed_out  =   new_signed_rs1;
-            ALU_FP_sub: begin
-                
-            end
-            
-            
-            signed_out  =   (change_flag) ? !(new_signed_rs1) : new_signed_rs1
-            default:    signed_out  =   new_signed_rs1;
-        endcase  
-    end
 endmodule

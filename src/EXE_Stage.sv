@@ -1,6 +1,6 @@
 `include "./EXE_ALU_Ctrl.sv"
 `include "./EXE_ALU.sv"
-// `include "./EXE_FP_ALU.sv"
+`include "./EXE_FP_ALU.sv"
 
 module EXE_Stage (
     //control Signal 
@@ -8,8 +8,8 @@ module EXE_Stage (
     input   wire                    pc_mux_sel,
     input   wire                    ALU_rs2_sel,
 
-    input   wire                    ID_EXE_rd_sel,
-    output  wire                    EXE_MEM_rd_sel,
+    input   wire [1:0]              ID_EXE_rd_sel,
+    output  wire [1:0]              EXE_MEM_rd_sel,
 
     input   wire                    ID_EXE_Din, 
     output  wire                    EXE_MEM_Din,       
@@ -53,6 +53,7 @@ module EXE_Stage (
     output  wire [`DATA_WIDTH -1:0] pc_sel_o,
     output  reg                     zeroflag,
     output  reg  [`DATA_WIDTH -1:0] ALU_o,
+    output  reg  [`DATA_WIDTH -1:0] ALU_FP_out,
     output  wire [`DATA_WIDTH -1:0] ALU_o_2_immrs1,
     output  reg  [`DATA_WIDTH -1:0] Mux3_ALU,
     output  reg  [`DATA_WIDTH -1:0] Mux_rs2_FP,
@@ -120,7 +121,6 @@ module EXE_Stage (
         .ALU_out(ALU_o), 
         .zeroflag(zeroflag)
     );
-
 //------------------------- EXE_ALU_Ctrl -------------------------//
     EXE_ALU_Ctrl EXE_ALU_Ctrl_inst(
         .ALU_op     (ALU_op),
@@ -149,13 +149,12 @@ module EXE_Stage (
     end
 
 //-------------- EXE_FP_ALU -------------------------//
-    // EXE_FP_ALU EXE_FP_ALU_inst(
-    //     // .ALU_ctrl(ALU_ctrl),
-    //     // .rs1(Mux2_ALU), 
-    //     // .rs2(Mux4_rs2),
-    //     // .ALU_out(ALU_o), 
-    //     // .zeroflag(zeroflag)
-    // );
+    EXE_FP_ALU EXE_FP_ALU_inst(
+        .FP_ALU_ctrl(ALU_ctrl),
+        .rs1(Mux_rs1_FP), 
+        .rs2(Mux_rs2_FP),
+        .ALU_FP_out(ALU_FP_out) 
+    );
 
 // //------------------------- EXE_ALU_Ctrl -------------------------//
 //     EXE_ALU_Ctrl EXE_ALU_Ctrl_inst(

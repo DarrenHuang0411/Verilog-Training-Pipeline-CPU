@@ -30,6 +30,8 @@ module top (
 
     wire    [1:0]               FWD_EXE_rs1_sel;
     wire    [1:0]               FWD_EXE_rs2_sel;
+    wire    [1:0]               FWD_EXE_rs1_FP_sel;
+    wire    [1:0]               FWD_EXE_rs2_FP_sel;
     ///////////////////////////////////////////////////
     wire                        EXE_Bctrl_zeroflag;
     wire                        MEM_DM_CS;
@@ -73,7 +75,7 @@ module top (
       reg                   ID_EXE_pc_mux;          // final --> EXE
       reg                   ID_EXE_ALU_rs2_sel;
       reg [1:0]             ID_EXE_branch_signal;
-      reg                   ID_EXE_rd_sel;          // final --> MEM
+      reg [1:0]             ID_EXE_rd_sel;          // final --> MEM
       reg                   ID_EXE_Din_sel;         // final --> MEM
       reg                   ID_EXE_DM_read;         // final --> MEM
       reg                   ID_EXE_DM_write;        // final --> MEM
@@ -85,7 +87,7 @@ module top (
       wire                  wire_ID_EXE_pc_mux       ;
       wire                  wire_ID_EXE_ALU_rs2_sel  ;
       wire [1:0]            wire_ID_EXE_branch_signal;
-      wire                  wire_ID_EXE_rd_sel       ;
+      wire [1:0]            wire_ID_EXE_rd_sel       ;
       wire                  wire_ID_EXE_Din_sel      ;      
       wire                  wire_ID_EXE_DM_read      ;
       wire                  wire_ID_EXE_DM_write     ;
@@ -96,6 +98,7 @@ module top (
   //------------- EXE-MEM Register --------------//
     reg [`DATA_WIDTH -1:0]  EXE_MEM_PC;
     reg [`DATA_WIDTH -1:0]  EXE_MEM_ALU_o;
+    reg [`DATA_WIDTH -1:0]  EXE_MEM_ALU_FP_o;
     reg [`DATA_WIDTH -1:0]  EXE_MEM_rs2_data;
     reg [`DATA_WIDTH -1:0]  EXE_MEM_rs2_FP_data;
     reg [`FUNCTION_3 -1:0]  EXE_MEM_function_3;
@@ -103,6 +106,7 @@ module top (
 
     wire [`DATA_WIDTH -1:0]  wire_EXE_MEM_PC         ;
     wire [`DATA_WIDTH -1:0]  wire_EXE_MEM_ALU_o      ;
+    wire [`DATA_WIDTH -1:0]  wire_EXE_MEM_ALU_FP_o   ;    
     wire [`DATA_WIDTH -1:0]  wire_EXE_MEM_rs2_data   ;
     wire [`DATA_WIDTH -1:0]  wire_EXE_MEM_rs2_FP_data;
     wire [`DATA_WIDTH -1:0]  wire_EXE_MEM_function_3 ;
@@ -112,7 +116,7 @@ module top (
     //------------- Ctrl sig reg -------------//
       reg                   EXE_MEM_DMread_sel;
       reg                   EXE_MEM_DMwrite_sel;
-      reg                   EXE_MEM_rd_sel;         // final --> MEM
+      reg  [1:0]            EXE_MEM_rd_sel;         // final --> MEM
       reg                   EXE_MEM_Din_sel;        // final --> MEM      
       reg                   EXE_MEM_DM_read;        // final --> MEM
       reg                   EXE_MEM_DM_write;       // final --> MEM
@@ -122,7 +126,7 @@ module top (
 
       wire                  wire_EXE_MEM_DMread_sel; 
       wire                  wire_EXE_MEM_DMwrite_sel;
-      wire                  wire_EXE_MEM_rd_sel;  
+      wire  [1:0]           wire_EXE_MEM_rd_sel;  
       wire                  wire_EXE_MEM_Din_sel;        
       wire                  wire_EXE_MEM_DM_read;    
       wire                  wire_EXE_MEM_DM_write;   
@@ -247,8 +251,8 @@ module top (
 
         .ForwardA_sel   (FWD_EXE_rs1_sel),
         .ForwardB_sel   (FWD_EXE_rs2_sel),//revise
-        .ForwardA_FP_sel   (FWD_EXE_rs1_sel),
-        .ForwardB_FP_sel   (FWD_EXE_rs2_sel),//revise
+        .ForwardA_FP_sel   (FWD_EXE_rs1_FP_sel),
+        .ForwardB_FP_sel   (FWD_EXE_rs2_FP_sel),//revise
       //Data
         .PC_EXE_in      (ID_EXE_pc_in),
         .EXE_rs1        (ID_EXE_rs1),
@@ -268,6 +272,7 @@ module top (
         .pc_sel_o       (wire_EXE_MEM_PC),
         .zeroflag       (EXE_Bctrl_zeroflag),
         .ALU_o          (wire_EXE_MEM_ALU_o),
+        .ALU_FP_out     (wire_EXE_MEM_ALU_FP_o),
         .ALU_o_2_immrs1 (EXE_IF_ALU_o),
         .Mux3_ALU       (wire_EXE_MEM_rs2_data),
         .Mux_rs2_FP     (wire_EXE_MEM_rs2_FP_data),
@@ -294,6 +299,7 @@ module top (
         //----------------------- MEM_I/O -----------------------//
         .MEM_pc           (EXE_MEM_PC),
         .MEM_ALU          (EXE_MEM_ALU_o),
+        .MEM_ALU_FP       (EXE_MEM_ALU_FP_o),
         .EXE_MEM_rd_addr  (EXE_MEM_rd_addr),
         .MEM_WB_rd_addr   (wire_MEM_WB_rd_addr),
         //------------------------ Data ------------------------//  
@@ -366,9 +372,13 @@ module top (
 
        .EXE_MEM_fwd_write    (EXE_MEM_reg_file_write),
        .MEM_WB_fwd_write     (MEM_WB_reg_file_write),
+       .EXE_MEM_fwd_FP_write (EXE_MEM_reg_file_FP_write),
+       .MEM_WB_fwd_FP_write  (MEM_WB_reg_file_FP_write), 
 
        .FWD_rs1_sel          (FWD_EXE_rs1_sel),
-       .FWD_rs2_sel          (FWD_EXE_rs2_sel)
+       .FWD_rs2_sel          (FWD_EXE_rs2_sel),
+       .FWD_rs1_FP_sel       (FWD_EXE_rs1_FP_sel),
+       .FWD_rs2_FP_sel       (FWD_EXE_rs2_FP_sel)    
     );
 
 //--------------- register_reset -----------------//
@@ -434,14 +444,15 @@ module top (
             ID_EXE_DM_write         <= (wire_ctrl_sig_flush) ? 1'b0 : wire_ID_EXE_DM_write;   
             ID_EXE_WB_data_sel      <= wire_ID_EXE_WB_data_sel  ;
             ID_EXE_reg_file_write   <= (wire_ctrl_sig_flush) ? 1'b0 : wire_ID_EXE_reg_file_write;   
-            ID_EXE_reg_file_FP_write<= wire_ID_EXE_reg_file_FP_write;  
+            ID_EXE_reg_file_FP_write<= (wire_ctrl_sig_flush) ? 1'b0 : wire_ID_EXE_reg_file_FP_write;  
         end
     end
 
     always_ff @(posedge clk) begin
         if (rst) begin
             EXE_MEM_PC                <=    0;                 
-            EXE_MEM_ALU_o             <=    0;                                
+            EXE_MEM_ALU_o             <=    0;
+            EXE_MEM_ALU_FP_o          <=    0;                                     
             EXE_MEM_rs2_data          <=    0; 
             EXE_MEM_rs2_FP_data       <=    0;                         
             EXE_MEM_function_3        <=    0;                                    
@@ -459,7 +470,8 @@ module top (
         end 
         else begin
             EXE_MEM_PC                <=    wire_EXE_MEM_PC         ;                 
-            EXE_MEM_ALU_o             <=    wire_EXE_MEM_ALU_o      ;                                
+            EXE_MEM_ALU_o             <=    wire_EXE_MEM_ALU_o      ; 
+            EXE_MEM_ALU_FP_o          <=    wire_EXE_MEM_ALU_FP_o   ;                                               
             EXE_MEM_rs2_data          <=    wire_EXE_MEM_rs2_data   ;
             EXE_MEM_rs2_FP_data       <=    wire_EXE_MEM_rs2_FP_data;                                     
             EXE_MEM_function_3        <=    wire_EXE_MEM_function_3 ;                                    

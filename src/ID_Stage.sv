@@ -30,7 +30,7 @@ module ID_Stage (
     output  wire                      EXE_pc_sel,   //final --> exe
     output  wire    [2:0]             ALU_rs2_sel,  //final --> exe
     output  wire    [1:0]             branch_signal,//final --> B ctrl 
-    output  wire                      MEM_rd_sel,   //final --> mem
+    output  wire    [1:0]             MEM_rd_sel,   //final --> mem
     output  wire                      MEM_Din_sel,  //final --> mem
     output  wire                      MEM_DM_read,  //final --> mem
     output  wire                      MEM_DM_write, //final --> mem
