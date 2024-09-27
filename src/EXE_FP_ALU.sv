@@ -81,4 +81,18 @@ module EXE_FP_ALU (
         end
     end
 
+//-------------------------- Substraction --------------------------------//
+    assign  significand_sub    =    significand_rs1 - significand_rs2_s; //32 bit
+    
+    always_comb begin
+        if(significand_[32]) begin
+            exp_add     =   FPU_rs1[30:23] + 1'b1;
+            fract_add   =   significand_add[31:9];
+        end
+        else begin
+            exp_add     =   FPU_rs1[30:23];
+            fract_add   =   significand_add[30:8];            
+        end
+    end
+
 endmodule
