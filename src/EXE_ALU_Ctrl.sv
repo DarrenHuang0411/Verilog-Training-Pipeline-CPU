@@ -18,8 +18,7 @@ module EXE_ALU_Ctrl (
                         I_JAL_type  =   3'b011,
                         B_type      =   3'b100,
                         U_LUI_type  =   3'b101,
-                        F_type      =   3'b110,
-                        CSR_type    =   3'b111;                        
+                        F_type      =   3'b110;                      
     //Function
     localparam  [4:0]   ALU_add =   5'd0,
                         ALU_sub =   5'd1,

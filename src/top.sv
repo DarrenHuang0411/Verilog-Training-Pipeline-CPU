@@ -9,6 +9,7 @@
 `include "Branch_Ctrl.sv"
 `include "Hazard_Ctrl.sv"
 `include "ForwardingUnit.sv"
+`include "CSR.sv"
 
 module top (
     input clk,
@@ -27,6 +28,7 @@ module top (
     wire                        HAZ_IF_instr_flush;
     wire                        wire_HAZ_IF_ID_reg_write;
     wire                        wire_ctrl_sig_flush;
+    wire                        wire_HAZ_CSR_lw_use;
 
     wire    [1:0]               FWD_EXE_rs1_sel;
     wire    [1:0]               FWD_EXE_rs2_sel;
@@ -103,6 +105,7 @@ module top (
     reg [`DATA_WIDTH -1:0]  EXE_MEM_rs2_FP_data;
     reg [`FUNCTION_3 -1:0]  EXE_MEM_function_3;
     reg [4:0]               EXE_MEM_rd_addr;
+    reg [4:0]               EXE_MEM_csr_rd ;
 
     wire [`DATA_WIDTH -1:0]  wire_EXE_MEM_PC         ;
     wire [`DATA_WIDTH -1:0]  wire_EXE_MEM_ALU_o      ;
@@ -111,6 +114,7 @@ module top (
     wire [`DATA_WIDTH -1:0]  wire_EXE_MEM_rs2_FP_data;
     wire [`DATA_WIDTH -1:0]  wire_EXE_MEM_function_3 ;
     wire [4:0]               wire_EXE_MEM_rd_addr    ;
+    wire [4:0]               wire_EXE_MEM_csr_rd     ;
 
     wire [`DATA_WIDTH -1:0] MEM_DM_Din;
     //------------- Ctrl sig reg -------------//
@@ -300,6 +304,7 @@ module top (
         .MEM_pc           (EXE_MEM_PC),
         .MEM_ALU          (EXE_MEM_ALU_o),
         .MEM_ALU_FP       (EXE_MEM_ALU_FP_o),
+        .MEM_csr          (EXE_MEM_csr_rd),
         .EXE_MEM_rd_addr  (EXE_MEM_rd_addr),
         .MEM_WB_rd_addr   (wire_MEM_WB_rd_addr),
         //------------------------ Data ------------------------//  
@@ -360,7 +365,8 @@ module top (
         .pc_write           (HAZ_IF_pc_w),  
         .instr_flush        (HAZ_IF_instr_flush),
         .IF_ID_reg_write    (wire_HAZ_IF_ID_reg_write),
-        .ctrl_sig_flush     (wire_ctrl_sig_flush)
+        .ctrl_sig_flush     (wire_ctrl_sig_flush),
+        .lw_use             (wire_HAZ_CSR_lw_use)
     );
 
 //--------------- Forwarding Unit -----------------//
@@ -379,6 +385,19 @@ module top (
        .FWD_rs2_sel          (FWD_EXE_rs2_sel),
        .FWD_rs1_FP_sel       (FWD_EXE_rs1_FP_sel),
        .FWD_rs2_FP_sel       (FWD_EXE_rs2_FP_sel)    
+    );
+
+//------------------- CSR --------------------------//
+    CSR CSR_inst(
+        .clk(clk), .rst(rst),
+        .CSR_op         (ID_EXE_ALU_Ctrl_op),
+        .function_3     (ID_EXE_function3),
+        .rs1_addr       (ID_EXE_rs1),
+        .imm_csr        (ID_EXE_imm),
+
+        .lw_use         (wire_HAZ_CSR_lw_use),
+        .branch         (ID_EXE_branch_signal),
+        .csr_rd_data    (wire_EXE_MEM_csr_rd)
     );
 
 //--------------- register_reset -----------------//

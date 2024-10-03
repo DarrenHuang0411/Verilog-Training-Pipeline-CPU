@@ -9,9 +9,13 @@ module Hazard_Ctrl (
     output  reg           pc_write,  
     output  reg           instr_flush,
     output  reg           IF_ID_reg_write,
-    output  reg           ctrl_sig_flush
+    output  reg           ctrl_sig_flush,
+
+    output  wire          lw_use  // for CSR
 );
-    
+
+assign  lw_use  =   EXE_read && ((EXE_rd_addr == ID_rs1_addr)||(EXE_rd_addr== ID_rs2_addr));
+
 //------------------- parameter -------------------//    
 
     always_comb begin

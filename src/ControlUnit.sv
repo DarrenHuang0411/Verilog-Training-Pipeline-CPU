@@ -186,8 +186,7 @@ module ControlUnit (
                 reg_file_write  =   1'b0;
                 reg_file_FP_write   =   1'b0; // 1: use        , 0: not use
                 branch_signal   =   N_Branch;                      
-            end
-        
+            end        
             //B-type
             7'b1100011: begin
                 ALU_Ctrl_op     =   B_type; 
@@ -260,23 +259,24 @@ module ControlUnit (
                 reg_file_FP_write   =   1'b0; // 1: use        , 0: not use                   
                 branch_signal   =   J_Branch;                
             end
-            // //CSR
-            // 7'b1110011: begin
-            //     ALU_Ctrl_op     =   CSR_type;
-            //     Imm_type        =   ;
+            //CSR
+            7'b1110011: begin
+                ALU_Ctrl_op     =   CSR_type;
+                Imm_type        =   Imm_I;
 
-            //     ALU_rs2_sel     =   ;               
-            //     EXE_pc_sel      =   ; 
-            //     MEM_rd_sel      =   1;   // 1: pc           , 0: from_alu(rd) 
-            
-            //     Din_sel         =   1'b0;   // 1: fp           , 0: int
-            //     DM_read         =   1'b0;
-            //     DM_write        =   1'b0;
+                ALU_rs2_sel     =   1'b0;   // 1: rs2 , 0: Imm (default)
+                EXE_pc_sel      =   1'b0;   // 1: pc+imm       , 0: pc+4 or don't care 
+                MEM_rd_sel      =   2'b11;   // 1: pc           , 0: from_alu(rd)                               
+                
+                Din_sel         =   1'b0;   // 1: fp           , 0: int
+                DM_read         =   1'b0;
+                DM_write        =   1'b0;
 
-            //     WB_data_sel     =   1'b0;
-            //     reg_file_write  =   1'b1;
-            //     branch_signal   =   J_Branch;                  
-            // end
+                WB_data_sel     =   1'b0;
+                reg_file_write  =   1'b1;
+                reg_file_FP_write   =   1'b0; // 1: use        , 0: not use                   
+                branch_signal   =   N_Branch;           
+            end
 
 
 
@@ -286,7 +286,7 @@ module ControlUnit (
 
                 ALU_rs2_sel     =   1'b0;   // 1: rs2 , 0: Imm (default)
                 EXE_pc_sel      =   1'b0;   // 1: pc+imm       , 0: pc+4 or don't care 
-                MEM_rd_sel      =   1'b0;   // 1: pc           , 0: from_alu(rd)                               
+                MEM_rd_sel      =   2'b0;   // 1: pc           , 0: from_alu(rd)                               
                 
                 Din_sel         =   1'b0;   // 1: fp           , 0: int
                 DM_read         =   1'b0;

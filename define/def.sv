@@ -4,6 +4,7 @@
 //DATA Parameter
     `define DATA_WIDTH      32
     `define MULT_DATA_WIDTH 64
+    `define CSR_REG_WIDTH   64
 
     `define OP_CODE         7
     `define FUNCTION_3      3

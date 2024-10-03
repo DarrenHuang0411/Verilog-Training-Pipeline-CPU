@@ -16,6 +16,7 @@ module MEM_Stage (
     input   wire  [`DATA_WIDTH -1:0]    MEM_pc,
     input   wire  [`DATA_WIDTH -1:0]    MEM_ALU,
     input   wire  [`DATA_WIDTH -1:0]    MEM_ALU_FP,
+    input   wire  [`DATA_WIDTH -1:0]    MEM_csr,
     input   wire  [4:0]                 EXE_MEM_rd_addr,
     output  wire  [4:0]                 MEM_WB_rd_addr,
     //------------------------ Data ------------------------//  
@@ -50,6 +51,7 @@ module MEM_Stage (
             2'b00:  MEM_rd_data =   MEM_ALU;
             2'b01:  MEM_rd_data =   MEM_pc;
             2'b10:  MEM_rd_data =   MEM_ALU_FP;
+            2'b11:  MEM_rd_data =   MEM_csr;
             default: MEM_rd_data    =   MEM_ALU;
         endcase
     end
