@@ -3,7 +3,7 @@
 module CSR (
   input  clk, rst,
   input  logic    [`OP_CODE -1:0]     CSR_op,
-  input  logic    [`function_3 -1:0]  function_3,
+  input  logic    [`FUNCTION_3 -1:0]  function_3,
   input  logic    [4:0]               rs1_addr,
   input  logic    [`DATA_WIDTH -1:0]  imm_csr,
 
