@@ -105,7 +105,7 @@ module top (
     reg [`DATA_WIDTH -1:0]  EXE_MEM_rs2_FP_data;
     reg [`FUNCTION_3 -1:0]  EXE_MEM_function_3;
     reg [4:0]               EXE_MEM_rd_addr;
-    reg [4:0]               EXE_MEM_csr_rd ;
+    reg [`DATA_WIDTH -1:0]  EXE_MEM_csr_rd ;
 
     wire [`DATA_WIDTH -1:0]  wire_EXE_MEM_PC         ;
     wire [`DATA_WIDTH -1:0]  wire_EXE_MEM_ALU_o      ;
@@ -114,7 +114,7 @@ module top (
     wire [`DATA_WIDTH -1:0]  wire_EXE_MEM_rs2_FP_data;
     wire [`DATA_WIDTH -1:0]  wire_EXE_MEM_function_3 ;
     wire [4:0]               wire_EXE_MEM_rd_addr    ;
-    wire [4:0]               wire_EXE_MEM_csr_rd     ;
+    wire [`DATA_WIDTH -1:0]  wire_EXE_MEM_csr_rd     ;
 
     wire [`DATA_WIDTH -1:0] MEM_DM_Din;
     //------------- Ctrl sig reg -------------//
@@ -392,11 +392,11 @@ module top (
         .clk(clk), .rst(rst),
         .CSR_op         (ID_EXE_ALU_Ctrl_op),
         .function_3     (ID_EXE_function3),
-        .rs1_addr       (ID_EXE_rs1),
+        .rs1            (ID_EXE_rs1),
         .imm_csr        (ID_EXE_imm),
 
         .lw_use         (wire_HAZ_CSR_lw_use),
-        .branch         (ID_EXE_branch_signal),
+        .branch         (BC_IF_branch_sel),
         .csr_rd_data    (wire_EXE_MEM_csr_rd)
     );
 
@@ -476,6 +476,7 @@ module top (
             EXE_MEM_rs2_FP_data       <=    0;                         
             EXE_MEM_function_3        <=    0;                                    
             EXE_MEM_rd_addr           <=    0;                     
+            EXE_MEM_csr_rd            <=    0;  
 
             EXE_MEM_DMread_sel        <=    0;                  
             EXE_MEM_DMwrite_sel       <=    0;                   
@@ -494,7 +495,8 @@ module top (
             EXE_MEM_rs2_data          <=    wire_EXE_MEM_rs2_data   ;
             EXE_MEM_rs2_FP_data       <=    wire_EXE_MEM_rs2_FP_data;                                     
             EXE_MEM_function_3        <=    wire_EXE_MEM_function_3 ;                                    
-            EXE_MEM_rd_addr           <=    wire_EXE_MEM_rd_addr    ;                     
+            EXE_MEM_rd_addr           <=    wire_EXE_MEM_rd_addr    ; 
+            EXE_MEM_csr_rd            <=    wire_EXE_MEM_csr_rd     ;  
 
             EXE_MEM_DMread_sel        <=    wire_EXE_MEM_DMread_sel;                   
             EXE_MEM_DMwrite_sel       <=    wire_EXE_MEM_DMwrite_sel;                   
