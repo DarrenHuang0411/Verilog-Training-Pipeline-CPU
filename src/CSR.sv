@@ -47,7 +47,7 @@ module CSR (
 
 //---------------------------- rd ----------------------------//
     always_comb begin
-        if(|rs1_addr)
+        if(|rs1)
           csr_rd_data = imm_csr;
         else begin
           case (imm_csr)
@@ -63,14 +63,14 @@ module CSR (
     always_ff @( posedge clk or posedge rst) begin
         if(rst)
           csr_status_reg  <=  32'd0;
-        else if (|rs1_addr) begin
+        else if (|rs1) begin
           case (function_3)
             CSRRW  :    csr_status_reg  <=  rs1;
             CSRRS  :    csr_status_reg  <=  csr_status_reg | rs1;
             CSRRC  :    csr_status_reg  <=  csr_status_reg & (~rs1);
             CSRRWI :    csr_status_reg  <=  rs1;
-            CSRRSI :    csr_status_reg  <=  csr_status_reg | rs1_addr;
-            CSRRCI :    csr_status_reg  <=  csr_status_reg | (~rs1_addr);
+            CSRRSI :    csr_status_reg  <=  csr_status_reg | rs1;
+            CSRRCI :    csr_status_reg  <=  csr_status_reg | (~rs1);
             default:    csr_status_reg  <=  32'd0; 
           endcase                
         end
