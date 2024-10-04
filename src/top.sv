@@ -105,7 +105,7 @@ module top (
     reg [`DATA_WIDTH -1:0]  EXE_MEM_rs2_FP_data;
     reg [`FUNCTION_3 -1:0]  EXE_MEM_function_3;
     reg [4:0]               EXE_MEM_rd_addr;
-    reg [4:0]               EXE_MEM_csr_rd ;
+    reg [`DATA_WIDTH -1:0]  EXE_MEM_csr_rd ;
 
     wire [`DATA_WIDTH -1:0]  wire_EXE_MEM_PC         ;
     wire [`DATA_WIDTH -1:0]  wire_EXE_MEM_ALU_o      ;
@@ -114,7 +114,7 @@ module top (
     wire [`DATA_WIDTH -1:0]  wire_EXE_MEM_rs2_FP_data;
     wire [`DATA_WIDTH -1:0]  wire_EXE_MEM_function_3 ;
     wire [4:0]               wire_EXE_MEM_rd_addr    ;
-    wire [4:0]               wire_EXE_MEM_csr_rd     ;
+    wire [`DATA_WIDTH -1:0]  wire_EXE_MEM_csr_rd     ;
 
     wire [`DATA_WIDTH -1:0] MEM_DM_Din;
     //------------- Ctrl sig reg -------------//
@@ -396,7 +396,7 @@ module top (
         .imm_csr        (ID_EXE_imm),
 
         .lw_use         (wire_HAZ_CSR_lw_use),
-        .branch         (ID_EXE_branch_signal),
+        .branch         (BC_IF_branch_sel),
         .csr_rd_data    (wire_EXE_MEM_csr_rd)
     );
 

@@ -35,9 +35,9 @@ module CSR (
             count_cycle     <=  count_cycle + 1;
 
             if(count_cycle >= 2) begin
-              unique if(lw_use) 
+              if(lw_use) 
                 count_instret   <=  count_instret;
-              else if(branch)
+              else if(|branch)
                 count_instret   <=  count_instret - 1;
               else
                 count_instret   <=  count_instret + 1;  
@@ -50,7 +50,7 @@ module CSR (
         if(|rs1)
           csr_rd_data = imm_csr;
         else begin
-          case (imm_csr)
+          case (imm_csr[11:0])
             12'hc82:  csr_rd_data  =  count_instret[63:32];
             12'hc02:  csr_rd_data  =  count_instret[31:0];
             12'hc80:  csr_rd_data  =  count_cycle[63:32];
@@ -71,7 +71,7 @@ module CSR (
             CSRRWI :    csr_status_reg  <=  rs1;
             CSRRSI :    csr_status_reg  <=  csr_status_reg | rs1;
             CSRRCI :    csr_status_reg  <=  csr_status_reg | (~rs1);
-            default:    csr_status_reg  <=  32'd0; 
+            default:    csr_status_reg  <=  csr_status_reg; 
           endcase                
         end
     end
