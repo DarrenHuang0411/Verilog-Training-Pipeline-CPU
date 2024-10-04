@@ -476,6 +476,7 @@ module top (
             EXE_MEM_rs2_FP_data       <=    0;                         
             EXE_MEM_function_3        <=    0;                                    
             EXE_MEM_rd_addr           <=    0;                     
+            EXE_MEM_csr_rd            <=    0;  
 
             EXE_MEM_DMread_sel        <=    0;                  
             EXE_MEM_DMwrite_sel       <=    0;                   
@@ -494,7 +495,8 @@ module top (
             EXE_MEM_rs2_data          <=    wire_EXE_MEM_rs2_data   ;
             EXE_MEM_rs2_FP_data       <=    wire_EXE_MEM_rs2_FP_data;                                     
             EXE_MEM_function_3        <=    wire_EXE_MEM_function_3 ;                                    
-            EXE_MEM_rd_addr           <=    wire_EXE_MEM_rd_addr    ;                     
+            EXE_MEM_rd_addr           <=    wire_EXE_MEM_rd_addr    ; 
+            EXE_MEM_csr_rd            <=    wire_EXE_MEM_csr_rd     ;  
 
             EXE_MEM_DMread_sel        <=    wire_EXE_MEM_DMread_sel;                   
             EXE_MEM_DMwrite_sel       <=    wire_EXE_MEM_DMwrite_sel;                   
