@@ -392,7 +392,7 @@ module top (
         .clk(clk), .rst(rst),
         .CSR_op         (ID_EXE_ALU_Ctrl_op),
         .function_3     (ID_EXE_function3),
-        .rs1_addr       (ID_EXE_rs1),
+        .rs1            (ID_EXE_rs1),
         .imm_csr        (ID_EXE_imm),
 
         .lw_use         (wire_HAZ_CSR_lw_use),
