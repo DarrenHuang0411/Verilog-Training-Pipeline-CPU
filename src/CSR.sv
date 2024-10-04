@@ -4,7 +4,7 @@ module CSR (
   input  clk, rst,
   input  logic    [`OP_CODE -1:0]     CSR_op,
   input  logic    [`FUNCTION_3 -1:0]  function_3,
-  input  logic    [4:0]               rs1_addr,
+  input  logic    [`DATA_WIDTH -1:0]  rs1,
   input  logic    [`DATA_WIDTH -1:0]  imm_csr,
 
   input  logic                        lw_use,
@@ -65,12 +65,12 @@ module CSR (
           csr_status_reg  <=  32'd0;
         else if (|rs1_addr) begin
           case (function_3)
-            CSRRW  :    csr_status_reg  <=  rs1_addr;
-            CSRRS  :    csr_status_reg  <=  csr_status_reg | rs1_addr;
-            CSRRC  :    csr_status_reg  <=  csr_status_reg & (~rs1_addr);
-            CSRRWI :    csr_status_reg  <=  {27'd0, rs1_addr};
-            CSRRSI :    csr_status_reg  <=  csr_status_reg | {27'd0, rs1_addr};
-            CSRRCI :    csr_status_reg  <=  csr_status_reg | {27'd0,(~rs1_addr)};
+            CSRRW  :    csr_status_reg  <=  rs1;
+            CSRRS  :    csr_status_reg  <=  csr_status_reg | rs1;
+            CSRRC  :    csr_status_reg  <=  csr_status_reg & (~rs1);
+            CSRRWI :    csr_status_reg  <=  rs1;
+            CSRRSI :    csr_status_reg  <=  csr_status_reg | rs1_addr;
+            CSRRCI :    csr_status_reg  <=  csr_status_reg | (~rs1_addr);
             default:    csr_status_reg  <=  32'd0; 
           endcase                
         end
